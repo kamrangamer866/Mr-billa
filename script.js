@@ -9,7 +9,7 @@ function welcome() {
 
         <br><br>
 
-        <a href="https://wa.me/923326657632" target="_blank">
+        <a href="https://wa.me/03326657632" target="_blank">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="60">
         </a>
     `;
