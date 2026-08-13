@@ -1,41 +1,68 @@
-body{
-    margin:0;
-    padding:0;
-    background:#000;
-    font-family:Arial,sans-serif;
-    text-align:center;
-    color:white;
+body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: white;
 }
 
-.card{
-    width:100%;
-    margin:0;
-    padding:0;
+.card {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
-.card img:first-child{
-    width:100%;
-    display:block;
+.banner {
+    width: 100%;
+    display: block;
 }
 
-button{
-    display:block;
-    width:100vw;
-    margin:0;
-    padding:20px 0;
-    background:#00c853;
-    color:#fff;
-    font-size:30px;
-    font-weight:bold;
-    border:none;
-    cursor:pointer;
+button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 20px 0;
+    background: #00c853;
+    color: #fff;
+    font-size: 30px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
 }
 
-button:hover{
-    background:#00e676;
+button:hover {
+    background: #00e676;
 }
 
-footer{
-    margin-top:20px;
-    color:white;
+h1 {
+    margin: 20px 0;
+    font-size: 30px;
+}
+
+h2 {
+    margin: 20px 0 10px;
+    font-size: 24px;
+}
+
+.gallery-photo {
+    width: 100%;
+    display: block;
+}
+
+.my-video {
+    width: 100%;
+    display: block;
+    background: #000;
+}
+
+.whatsapp {
+    display: inline-block;
+}
+
+footer {
+    margin: 20px 0;
+    padding-bottom: 20px;
+    color: white;
+    font-size: 16px;
 }
