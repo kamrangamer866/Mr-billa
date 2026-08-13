@@ -1,79 +1,61 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Gallery</title>
 
-<link rel="stylesheet"
-      href="Style.css">
+<link rel="stylesheet" href="Style.css">
 
 </head>
 
-
 <body>
 
-
 <div class="card">
-
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
 
-<h2>Pictures</h2>
+<h2>📸 Pictures</h2>
 
 <div id="images">
-    Loading pictures...
+Loading pictures...
 </div>
 
 
-<h2>Videos</h2>
+<h2>🎬 Videos</h2>
 
 <div id="videos">
-    Loading videos...
+Loading videos...
 </div>
 
 
 <br><br>
 
-
-<a href="index.html"
-   class="start-btn">
-
+<a href="index.html" class="start-btn">
 BACK
-
 </a>
 
 
 <footer>
-
 © 2026 MR BILLA DLR
-
 </footer>
-
 
 </div>
 
-
-
-<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
 
-
 <script>
 
-
 async function loadGallery() {
-
 
     const images =
         document.getElementById("images");
@@ -82,19 +64,25 @@ async function loadGallery() {
         document.getElementById("videos");
 
 
-    // =========================
-    // LOAD PICTURES
-    // =========================
+    /*
+     * IMAGES
+     */
 
-    const { data: imageFiles, error: imageError } =
-        await supabase.storage
+    const {
+        data: imageFiles,
+        error: imageError
+    } =
+        await supabaseClient.storage
         .from("uploads")
         .list("images", {
+
             limit: 100,
+
             sortBy: {
                 column: "created_at",
                 order: "desc"
             }
+
         });
 
 
@@ -103,11 +91,12 @@ async function loadGallery() {
         images.innerHTML =
             "❌ Pictures load nahi ho sakin.";
 
-        console.error(imageError);
-
     }
 
-    else if (!imageFiles || imageFiles.length === 0) {
+    else if (
+        !imageFiles ||
+        imageFiles.length === 0
+    ) {
 
         images.innerHTML =
             "No pictures uploaded yet.";
@@ -119,56 +108,60 @@ async function loadGallery() {
         images.innerHTML = "";
 
 
-        imageFiles.forEach(function(file) {
+        imageFiles.forEach(
+            function(file) {
+
+                const {
+                    data
+                } =
+                    supabaseClient.storage
+                    .from("uploads")
+                    .getPublicUrl(
+                        "images/" +
+                        file.name
+                    );
 
 
-            const { data } =
-                supabase.storage
-                .from("uploads")
-                .getPublicUrl(
-                    "images/" + file.name
-                );
+                const img =
+                    document
+                    .createElement("img");
 
 
-            const img =
-                document.createElement("img");
+                img.src =
+                    data.publicUrl;
 
 
-            img.src = data.publicUrl;
-
-            img.className =
-                "gallery-img";
-
-            img.alt =
-                "MR BILLA DLR";
+                img.className =
+                    "gallery-img";
 
 
-            images.appendChild(img);
+                images.appendChild(img);
 
-
-            images.appendChild(
-                document.createElement("br")
-            );
-
-        });
+            }
+        );
 
     }
 
 
+    /*
+     * VIDEOS
+     */
 
-    // =========================
-    // LOAD VIDEOS
-    // =========================
-
-    const { data: videoFiles, error: videoError } =
-        await supabase.storage
+    const {
+        data: videoFiles,
+        error: videoError
+    } =
+        await supabaseClient.storage
         .from("uploads")
         .list("videos", {
+
             limit: 100,
+
             sortBy: {
                 column: "created_at",
                 order: "desc"
             }
+
         });
 
 
@@ -177,11 +170,12 @@ async function loadGallery() {
         videos.innerHTML =
             "❌ Videos load nahi ho sakin.";
 
-        console.error(videoError);
-
     }
 
-    else if (!videoFiles || videoFiles.length === 0) {
+    else if (
+        !videoFiles ||
+        videoFiles.length === 0
+    ) {
 
         videos.innerHTML =
             "No videos uploaded yet.";
@@ -193,55 +187,52 @@ async function loadGallery() {
         videos.innerHTML = "";
 
 
-        videoFiles.forEach(function(file) {
+        videoFiles.forEach(
+            function(file) {
+
+                const {
+                    data
+                } =
+                    supabaseClient.storage
+                    .from("uploads")
+                    .getPublicUrl(
+                        "videos/" +
+                        file.name
+                    );
 
 
-            const { data } =
-                supabase.storage
-                .from("uploads")
-                .getPublicUrl(
-                    "videos/" + file.name
+                const video =
+                    document
+                    .createElement("video");
+
+
+                video.src =
+                    data.publicUrl;
+
+
+                video.className =
+                    "gallery-video";
+
+
+                video.controls =
+                    true;
+
+
+                video.playsInline =
+                    true;
+
+
+                videos.appendChild(video);
+
+
+                videos.appendChild(
+                    document
+                    .createElement("br")
                 );
 
 
-            const video =
-                document.createElement("video");
-
-
-            video.className =
-                "gallery-video";
-
-            video.controls = true;
-
-            video.playsInline = true;
-
-
-            const source =
-                document.createElement("source");
-
-
-            source.src =
-                data.publicUrl;
-
-            source.type =
-                "video/mp4";
-
-
-            video.appendChild(source);
-
-
-            videos.appendChild(video);
-
-
-            videos.appendChild(
-                document.createElement("br")
-            );
-
-            videos.appendChild(
-                document.createElement("br")
-            );
-
-        });
+            }
+        );
 
     }
 
@@ -252,7 +243,5 @@ loadGallery();
 
 </script>
 
-
 </body>
-
 </html>
