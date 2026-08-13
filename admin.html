@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Panel</title>
 
-<link rel="stylesheet" href="Style.css">
+<link rel="stylesheet"
+      href="Style.css">
+
 </head>
+
 
 <body>
 
+
 <div class="card">
+
 
 <h1>🔥 MR BILLA DLR ADMIN 🔥</h1>
 
+
 <h2>Upload Picture</h2>
+
 
 <input
     type="file"
@@ -24,15 +35,24 @@
     accept="image/*"
 >
 
+
 <br><br>
 
-<button onclick="uploadImage()" class="signup-btn">
+
+<button
+    onclick="uploadImage()"
+    class="signup-btn">
+
 UPLOAD PICTURE
+
 </button>
 
+
 <br><br>
 
+
 <h2>Upload Video</h2>
+
 
 <input
     type="file"
@@ -41,140 +61,313 @@ UPLOAD PICTURE
     accept="video/*"
 >
 
+
 <br><br>
 
-<button onclick="uploadVideo()" class="signup-btn">
+
+<button
+    onclick="uploadVideo()"
+    class="signup-btn">
+
 UPLOAD VIDEO
+
 </button>
+
 
 <p id="message"></p>
 
+
 <br>
 
-<a href="Gallery.html" class="start-btn">
+
+<a href="Gallery.html"
+   class="start-btn">
+
 VIEW GALLERY
+
 </a>
+
 
 <br><br>
 
-<button onclick="logout()" class="start-btn">
+
+<button
+    onclick="logout()"
+    class="start-btn">
+
 LOGOUT
+
 </button>
 
+
 <footer>
+
 © 2026 MR BILLA DLR
+
 </footer>
+
 
 </div>
 
+
+
+<!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
+
+
 
 <script>
 
+
+// ==========================
+// CHECK LOGIN
+// ==========================
+
 async function checkAdmin() {
 
-    const { data } = await supabase.auth.getSession();
 
-    if (!data.session) {
-        window.location.href = "login.html";
-        return;
+    try {
+
+
+        const { data, error } =
+            await supabase.auth.getSession();
+
+
+        if (error) {
+
+            console.error(error);
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (!data.session) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
     }
+
+    catch (error) {
+
+        console.error(error);
+
+        window.location.href =
+            "login.html";
+
+    }
+
 }
+
 
 checkAdmin();
 
 
-// =========================
+
+// ==========================
 // UPLOAD PICTURE
-// =========================
+// ==========================
 
 async function uploadImage() {
 
-    const file = document.getElementById("imageFile").files[0];
+
+    const file =
+        document
+        .getElementById("imageFile")
+        .files[0];
+
+
+    const message =
+        document.getElementById("message");
+
 
     if (!file) {
-        alert("Please select a picture first.");
-        return;
-    }
-
-    const message = document.getElementById("message");
-
-    message.textContent = "Uploading picture...";
-
-    const fileName =
-        Date.now() + "_" + file.name;
-
-    const { error } = await supabase.storage
-        .from("uploads")
-        .upload("images/" + fileName, file);
-
-    if (error) {
 
         message.textContent =
-            "Upload failed: " + error.message;
+            "❌ Please select a picture first.";
 
         return;
+
     }
 
-    message.textContent =
-        "✅ Picture uploaded successfully!";
 
-    document.getElementById("imageFile").value = "";
+    message.textContent =
+        "Uploading picture...";
+
+
+    const fileName =
+        Date.now() +
+        "_" +
+        file.name;
+
+
+    try {
+
+
+        const { error } =
+            await supabase.storage
+            .from("uploads")
+            .upload(
+                "images/" + fileName,
+                file
+            );
+
+
+        if (error) {
+
+            message.textContent =
+                "❌ Upload failed: " +
+                error.message;
+
+            console.error(error);
+
+            return;
+
+        }
+
+
+        message.textContent =
+            "✅ Picture uploaded successfully!";
+
+
+        document
+        .getElementById("imageFile")
+        .value = "";
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "❌ " + error.message;
+
+    }
+
 }
 
 
-// =========================
+
+// ==========================
 // UPLOAD VIDEO
-// =========================
+// ==========================
 
 async function uploadVideo() {
 
-    const file = document.getElementById("videoFile").files[0];
+
+    const file =
+        document
+        .getElementById("videoFile")
+        .files[0];
+
+
+    const message =
+        document.getElementById("message");
+
 
     if (!file) {
-        alert("Please select a video first.");
-        return;
-    }
-
-    const message = document.getElementById("message");
-
-    message.textContent = "Uploading video...";
-
-    const fileName =
-        Date.now() + "_" + file.name;
-
-    const { error } = await supabase.storage
-        .from("uploads")
-        .upload("videos/" + fileName, file);
-
-    if (error) {
 
         message.textContent =
-            "Upload failed: " + error.message;
+            "❌ Please select a video first.";
 
         return;
+
     }
 
-    message.textContent =
-        "✅ Video uploaded successfully!";
 
-    document.getElementById("videoFile").value = "";
+    message.textContent =
+        "Uploading video...";
+
+
+    const fileName =
+        Date.now() +
+        "_" +
+        file.name;
+
+
+    try {
+
+
+        const { error } =
+            await supabase.storage
+            .from("uploads")
+            .upload(
+                "videos/" + fileName,
+                file
+            );
+
+
+        if (error) {
+
+            message.textContent =
+                "❌ Upload failed: " +
+                error.message;
+
+            console.error(error);
+
+            return;
+
+        }
+
+
+        message.textContent =
+            "✅ Video uploaded successfully!";
+
+
+        document
+        .getElementById("videoFile")
+        .value = "";
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "❌ " + error.message;
+
+    }
+
 }
 
 
-// =========================
+
+// ==========================
 // LOGOUT
-// =========================
+// ==========================
 
 async function logout() {
 
+
     await supabase.auth.signOut();
 
-    window.location.href = "index.html";
+
+    window.location.href =
+        "index.html";
+
+
 }
+
 
 </script>
 
+
 </body>
+
 </html>
