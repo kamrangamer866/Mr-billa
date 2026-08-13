@@ -8,18 +8,22 @@ body{
 
 .card{
     width:100%;
+    max-width:100%;
+    padding:0;
+    margin:0;
 }
 
 button{
+    display:block;
     width:100%;
     background:#00c853;
     color:white;
-    font-size:28px;
+    font-size:30px;
     font-weight:bold;
-    padding:18px;
+    padding:20px;
     border:none;
-    border-radius:0;
     cursor:pointer;
+    margin:20px 0;
 }
 
 button:hover{
