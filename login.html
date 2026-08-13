@@ -2,14 +2,12 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Login</title>
 
 <link rel="stylesheet" href="Style.css">
-
 </head>
 
 <body>
@@ -24,7 +22,7 @@
     type="email"
     id="email"
     class="input-box"
-    placeholder="Admin Email"
+    placeholder="Enter Admin Email"
     required
 >
 
@@ -34,18 +32,14 @@
     type="password"
     id="password"
     class="input-box"
-    placeholder="Password"
+    placeholder="Enter Password"
     required
 >
 
 <br><br>
 
-<button
-    type="submit"
-    class="start-btn">
-
+<button type="submit" class="start-btn">
 LOGIN
-
 </button>
 
 </form>
@@ -75,17 +69,13 @@ BACK
 
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
-
 <script>
 
-const ADMIN_EMAIL =
-    "kamrangamer866@gmail.com";
-
+const ADMIN_EMAIL = "kamrangamer866@gmail.com";
 
 const loginForm =
     document.getElementById("loginForm");
@@ -94,113 +84,88 @@ const message =
     document.getElementById("message");
 
 
-loginForm.addEventListener(
-    "submit",
-    async function(event) {
+loginForm.addEventListener("submit", async function(event) {
 
-        event.preventDefault();
+    event.preventDefault();
 
+    const email =
+        document.getElementById("email")
+        .value
+        .trim()
+        .toLowerCase();
 
-        const email =
-            document
-            .getElementById("email")
-            .value
-            .trim()
-            .toLowerCase();
-
-
-        const password =
-            document
-            .getElementById("password")
-            .value;
+    const password =
+        document.getElementById("password")
+        .value;
 
 
-        /*
-         * ONLY ADMIN EMAIL ALLOWED
-         */
+    if (email !== ADMIN_EMAIL) {
 
-        if (email !== ADMIN_EMAIL) {
+        message.textContent =
+            "❌ Only Admin can login.";
+
+        return;
+    }
+
+
+    message.textContent =
+        "Logging in...";
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient.auth.signInWithPassword({
+
+            email: email,
+
+            password: password
+
+        });
+
+
+        if (error) {
 
             message.textContent =
-                "❌ This email is not the Admin account.";
+                "❌ " + error.message;
+
+            return;
+        }
+
+
+        if (!data.session) {
+
+            message.textContent =
+                "❌ Login session not created.";
 
             return;
         }
 
 
         message.textContent =
-            "Logging in...";
+            "✅ Login successful!";
 
 
-        try {
+        window.location.href = "admin.html";
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth
-                .signInWithPassword({
+    } catch (error) {
 
-                    email: email,
+        console.error(error);
 
-                    password: password
-
-                });
-
-
-            if (error) {
-
-                message.textContent =
-                    "❌ " + error.message;
-
-                return;
-            }
-
-
-            if (!data.session) {
-
-                message.textContent =
-                    "❌ Login session was not created.";
-
-                return;
-            }
-
-
-            message.textContent =
-                "✅ Admin login successful!";
-
-
-            setTimeout(function() {
-
-                window.location.href =
-                    "admin.html";
-
-            }, 500);
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            message.textContent =
-                "❌ " + error.message;
-
-        }
+        message.textContent =
+            "❌ " + error.message;
 
     }
-);
 
+});
 
-/*
- * FORGOT PASSWORD
- */
 
 async function forgotPassword() {
 
     const email =
-        document
-        .getElementById("email")
+        document.getElementById("email")
         .value
         .trim()
         .toLowerCase();
@@ -209,7 +174,7 @@ async function forgotPassword() {
     if (email !== ADMIN_EMAIL) {
 
         message.textContent =
-            "❌ Admin email enter karo.";
+            "❌ Enter the Admin email first.";
 
         return;
     }
@@ -224,18 +189,16 @@ async function forgotPassword() {
         const {
             error
         } =
-            await supabaseClient.auth
-            .resetPasswordForEmail(
+        await supabaseClient.auth.resetPasswordForEmail(
 
-                ADMIN_EMAIL,
+            ADMIN_EMAIL,
 
-                {
-                    redirectTo:
-                        window.location.origin +
-                        "/reset-password.html"
-                }
+            {
+                redirectTo:
+                    "https://mr-billa-dlr.vercel.app"
+            }
 
-            );
+        );
 
 
         if (error) {
@@ -248,11 +211,9 @@ async function forgotPassword() {
 
 
         message.textContent =
-            "✅ Password reset email sent. Gmail check karo.";
+            "✅ Check your Gmail for the password reset email.";
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         message.textContent =
             "❌ " + error.message;
