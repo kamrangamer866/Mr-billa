@@ -38,8 +38,14 @@ h2{
     text-shadow:0 0 10px red;
 }
 
+
+/* =========================
+   START BUTTON
+========================= */
+
 .start-btn{
     display:inline-block;
+    width:auto;
     background:#e00000;
     color:#fff;
     text-decoration:none;
@@ -50,11 +56,18 @@ h2{
     border:2px solid #ff3333;
     box-shadow:0 0 20px red;
     transition:.3s;
+    cursor:pointer;
 }
 
 .start-btn:hover{
     background:red;
+    transform:scale(1.03);
 }
+
+
+/* =========================
+   SIGN UP BUTTON
+========================= */
 
 .signup-btn{
     display:inline-block;
@@ -68,11 +81,44 @@ h2{
     border:2px solid #3399ff;
     box-shadow:0 0 20px #0066ff;
     transition:.3s;
+    cursor:pointer;
 }
 
 .signup-btn:hover{
     background:#0055dd;
+    transform:scale(1.03);
 }
+
+
+/* =========================
+   WHATSAPP BUTTON
+========================= */
+
+.whatsapp-btn{
+    display:inline-block;
+    width:auto;
+    background:#00c853;
+    color:#fff;
+    text-decoration:none;
+    padding:15px 60px;
+    font-size:28px;
+    font-weight:bold;
+    border-radius:10px;
+    border:2px solid #25d366;
+    box-shadow:0 0 20px #00c853;
+    transition:.3s;
+    cursor:pointer;
+}
+
+.whatsapp-btn:hover{
+    background:#00a844;
+    transform:scale(1.03);
+}
+
+
+/* =========================
+   INPUT BOX
+========================= */
 
 .input-box{
     width:100%;
@@ -89,7 +135,12 @@ h2{
 .input-box::placeholder{
     color:#aaa;
 }
-/* Gallery Image */
+
+
+/* =========================
+   GALLERY IMAGE
+========================= */
+
 .gallery-img{
     width:100%;
     max-width:550px;
@@ -100,7 +151,11 @@ h2{
     box-shadow:0 0 15px red;
 }
 
-/* Gallery Video */
+
+/* =========================
+   GALLERY VIDEO
+========================= */
+
 .gallery-video{
     width:100%;
     max-width:550px;
@@ -112,7 +167,11 @@ h2{
     background:#111;
 }
 
-/* WhatsApp */
+
+/* =========================
+   OLD WHATSAPP ICON
+========================= */
+
 .whatsapp{
     width:45px;
     height:45px;
@@ -124,7 +183,11 @@ h2{
     transform:scale(1.1);
 }
 
-/* Footer */
+
+/* =========================
+   FOOTER
+========================= */
+
 footer{
     margin-top:30px;
     padding:20px;
@@ -133,7 +196,11 @@ footer{
     color:#fff;
 }
 
-/* Mobile */
+
+/* =========================
+   MOBILE
+========================= */
+
 @media(max-width:600px){
 
     .card{
@@ -149,7 +216,8 @@ footer{
     }
 
     .start-btn,
-    .signup-btn{
+    .signup-btn,
+    .whatsapp-btn{
         width:90%;
         font-size:24px;
         padding:14px;
