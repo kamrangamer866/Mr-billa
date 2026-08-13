@@ -6,50 +6,129 @@
 
 body {
     background: #000;
-    color: white;
+    color: #fff;
     font-family: Arial, sans-serif;
     text-align: center;
+    min-height: 100vh;
 }
 
 .card {
     width: 100%;
-    max-width: 500px;
-    margin: 20px auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 15px;
 }
 
+/* Main Banner */
 .banner {
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
+    height: auto;
     display: block;
-    margin: 0 auto 20px;
-    border-radius: 8px;
-}
-
-button {
-    background: #ff0000;
-    color: white;
-    border: 2px solid #ff3333;
+    margin: 0 auto 25px;
     border-radius: 10px;
-    padding: 12px 35px;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 15px red;
 }
 
-button:active {
+/* Start Button */
+.start-btn {
+    display: inline-block;
+    background: #e00000;
+    color: #fff;
+    text-decoration: none;
+    padding: 15px 60px;
+    border-radius: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 15px auto 30px;
+    box-shadow: 0 0 20px red;
+    border: 2px solid #ff3333;
+}
+
+.start-btn:hover {
+    background: #ff0000;
+}
+
+.start-btn:active {
     transform: scale(0.95);
 }
 
+/* WhatsApp */
 .whatsapp {
-    margin-top: 25px;
     width: 40px;
     height: 40px;
+    margin: 10px auto 25px;
 }
 
+/* Gallery Heading */
+h1 {
+    color: #fff;
+    font-size: 32px;
+    margin: 15px 0 30px;
+    text-shadow: 0 0 10px red;
+}
+
+h2 {
+    color: #fff;
+    font-size: 24px;
+    margin: 25px 0 15px;
+    text-shadow: 0 0 8px red;
+}
+
+/* Gallery Pictures */
+.gallery-img {
+    width: 100%;
+    max-width: 550px;
+    height: auto;
+    display: block;
+    margin: 15px auto;
+    border-radius: 12px;
+    border: 2px solid red;
+    box-shadow: 0 0 15px red;
+}
+
+/* Gallery Videos */
+.gallery-video {
+    width: 100%;
+    max-width: 550px;
+    height: auto;
+    display: block;
+    margin: 15px auto;
+    border-radius: 12px;
+    border: 2px solid red;
+    box-shadow: 0 0 15px red;
+    background: #111;
+}
+
+/* Footer */
 footer {
     margin-top: 30px;
+    padding: 20px 0;
+    color: #fff;
     font-size: 18px;
     font-weight: bold;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+    .card {
+        padding: 10px;
+    }
+
+    .start-btn {
+        font-size: 24px;
+        padding: 14px 50px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    footer {
+        font-size: 16px;
+    }
 }
