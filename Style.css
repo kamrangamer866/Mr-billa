@@ -14,13 +14,13 @@ body {
 }
 
 .banner {
-    width: 100%;
+    width: 50%;
     display: block;
 }
 
 button {
     display: block;
-    width: 100%;
+    width: 50%;
     margin: 0;
     padding: 20px 0;
     background: #00c853;
