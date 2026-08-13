@@ -4,29 +4,24 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<title>MR BILLA DLR - Admin Dashboard</title>
 
-<title>MR BILLA DLR - Admin Panel</title>
-
-<link rel="stylesheet"
-      href="Style.css">
+<link rel="stylesheet" href="Style.css">
 
 </head>
 
-
 <body>
-
 
 <div class="card">
 
+<h1>🔥 MR BILLA DLR 🔥</h1>
 
-<h1>🔥 MR BILLA DLR ADMIN 🔥</h1>
+<h2>ADMIN DASHBOARD</h2>
 
 
-<h2>Upload Picture</h2>
-
+<h3>📸 Upload Picture</h3>
 
 <input
     type="file"
@@ -35,9 +30,7 @@
     accept="image/*"
 >
 
-
 <br><br>
-
 
 <button
     onclick="uploadImage()"
@@ -51,8 +44,7 @@ UPLOAD PICTURE
 <br><br>
 
 
-<h2>Upload Video</h2>
-
+<h3>🎬 Upload Video</h3>
 
 <input
     type="file"
@@ -61,9 +53,7 @@ UPLOAD PICTURE
     accept="video/*"
 >
 
-
 <br><br>
-
 
 <button
     onclick="uploadVideo()"
@@ -79,17 +69,12 @@ UPLOAD VIDEO
 
 <br>
 
-
-<a href="Gallery.html"
-   class="start-btn">
-
+<a href="Gallery.html" class="start-btn">
 VIEW GALLERY
-
 </a>
 
 
 <br><br>
-
 
 <button
     onclick="logout()"
@@ -101,68 +86,51 @@ LOGOUT
 
 
 <footer>
-
 © 2026 MR BILLA DLR
-
 </footer>
-
 
 </div>
 
-
-
-<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
 
-
 <script>
 
+const ADMIN_EMAIL =
+    "kamrangamer866@gmail.com";
 
-// ==========================
-// CHECK LOGIN
-// ==========================
 
 async function checkAdmin() {
 
-
-    try {
-
-
-        const { data, error } =
-            await supabase.auth.getSession();
-
-
-        if (error) {
-
-            console.error(error);
-
-            window.location.href =
-                "login.html";
-
-            return;
-
-        }
+    const {
+        data,
+        error
+    } =
+        await supabaseClient.auth.getSession();
 
 
-        if (!data.session) {
+    if (
+        error ||
+        !data.session
+    ) {
 
-            window.location.href =
-                "login.html";
+        window.location.href =
+            "login.html";
 
-            return;
-
-        }
-
-
+        return;
     }
 
-    catch (error) {
 
-        console.error(error);
+    if (
+        data.session.user.email
+        .toLowerCase()
+        !== ADMIN_EMAIL
+    ) {
+
+        await supabaseClient.auth.signOut();
 
         window.location.href =
             "login.html";
@@ -176,12 +144,7 @@ checkAdmin();
 
 
 
-// ==========================
-// UPLOAD PICTURE
-// ==========================
-
 async function uploadImage() {
-
 
     const file =
         document
@@ -190,16 +153,16 @@ async function uploadImage() {
 
 
     const message =
-        document.getElementById("message");
+        document
+        .getElementById("message");
 
 
     if (!file) {
 
         message.textContent =
-            "❌ Please select a picture first.";
+            "❌ Picture select karo.";
 
         return;
-
     }
 
 
@@ -213,61 +176,39 @@ async function uploadImage() {
         file.name;
 
 
-    try {
+    const {
+        error
+    } =
+        await supabaseClient.storage
+        .from("uploads")
+        .upload(
+            "images/" + fileName,
+            file
+        );
 
 
-        const { error } =
-            await supabase.storage
-            .from("uploads")
-            .upload(
-                "images/" + fileName,
-                file
-            );
-
-
-        if (error) {
-
-            message.textContent =
-                "❌ Upload failed: " +
-                error.message;
-
-            console.error(error);
-
-            return;
-
-        }
-
-
-        message.textContent =
-            "✅ Picture uploaded successfully!";
-
-
-        document
-        .getElementById("imageFile")
-        .value = "";
-
-
-    }
-
-    catch (error) {
-
-        console.error(error);
+    if (error) {
 
         message.textContent =
             "❌ " + error.message;
 
+        return;
     }
+
+
+    message.textContent =
+        "✅ Picture uploaded successfully!";
+
+
+    document
+    .getElementById("imageFile")
+    .value = "";
 
 }
 
 
 
-// ==========================
-// UPLOAD VIDEO
-// ==========================
-
 async function uploadVideo() {
-
 
     const file =
         document
@@ -276,16 +217,16 @@ async function uploadVideo() {
 
 
     const message =
-        document.getElementById("message");
+        document
+        .getElementById("message");
 
 
     if (!file) {
 
         message.textContent =
-            "❌ Please select a video first.";
+            "❌ Video select karo.";
 
         return;
-
     }
 
 
@@ -299,75 +240,48 @@ async function uploadVideo() {
         file.name;
 
 
-    try {
+    const {
+        error
+    } =
+        await supabaseClient.storage
+        .from("uploads")
+        .upload(
+            "videos/" + fileName,
+            file
+        );
 
 
-        const { error } =
-            await supabase.storage
-            .from("uploads")
-            .upload(
-                "videos/" + fileName,
-                file
-            );
-
-
-        if (error) {
-
-            message.textContent =
-                "❌ Upload failed: " +
-                error.message;
-
-            console.error(error);
-
-            return;
-
-        }
-
-
-        message.textContent =
-            "✅ Video uploaded successfully!";
-
-
-        document
-        .getElementById("videoFile")
-        .value = "";
-
-
-    }
-
-    catch (error) {
-
-        console.error(error);
+    if (error) {
 
         message.textContent =
             "❌ " + error.message;
 
+        return;
     }
+
+
+    message.textContent =
+        "✅ Video uploaded successfully!";
+
+
+    document
+    .getElementById("videoFile")
+    .value = "";
 
 }
 
 
 
-// ==========================
-// LOGOUT
-// ==========================
-
 async function logout() {
 
-
-    await supabase.auth.signOut();
-
+    await supabaseClient.auth.signOut();
 
     window.location.href =
         "index.html";
 
-
 }
-
 
 </script>
 
-
 </body>
-
 </html>
