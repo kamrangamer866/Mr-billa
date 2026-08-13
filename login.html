@@ -66,9 +66,10 @@ BACK
 </div>
 
 
-<!-- Supabase -->
+<!-- Supabase Library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- Supabase Connection -->
 <script src="supabase.js"></script>
 
 
@@ -87,7 +88,6 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-
         const email =
             document.getElementById("email")
             .value
@@ -97,14 +97,13 @@ loginForm.addEventListener(
             document.getElementById("password")
             .value;
 
-
         message.textContent =
             "Logging in...";
 
 
         try {
 
-            if (typeof supabase === "undefined") {
+            if (typeof supabaseClient === "undefined") {
 
                 message.textContent =
                     "❌ Supabase connection not found.";
@@ -114,7 +113,7 @@ loginForm.addEventListener(
 
 
             const { data, error } =
-                await supabase.auth.signInWithPassword({
+                await supabaseClient.auth.signInWithPassword({
 
                     email: email,
 
