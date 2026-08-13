@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MR BILLA DLR - Sign Up</title>
+
+<title>MR BILLA DLR - Admin Sign Up</title>
 
 <link rel="stylesheet" href="Style.css">
 </head>
@@ -14,17 +15,35 @@
 
 <h1>🔥 ADMIN SIGN UP 🔥</h1>
 
-<form>
+<form id="signupForm">
 
-<input type="text" class="input-box" placeholder="Username" required>
+<input
+    type="text"
+    id="username"
+    class="input-box"
+    placeholder="Username"
+    required
+>
 
 <br><br>
 
-<input type="email" class="input-box" placeholder="Email" required>
+<input
+    type="email"
+    id="email"
+    class="input-box"
+    placeholder="Email"
+    required
+>
 
 <br><br>
 
-<input type="password" class="input-box" placeholder="Password" required>
+<input
+    type="password"
+    id="password"
+    class="input-box"
+    placeholder="Password"
+    required
+>
 
 <br><br>
 
@@ -34,7 +53,9 @@ CREATE ACCOUNT
 
 </form>
 
-<br><br>
+<p id="message"></p>
+
+<br>
 
 <a href="login.html" class="start-btn">
 LOGIN
@@ -52,5 +73,58 @@ BACK
 
 </div>
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+
+const signupForm = document.getElementById("signupForm");
+const message = document.getElementById("message");
+
+signupForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    message.textContent = "Creating account...";
+
+    try {
+
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
+        });
+
+        if (error) {
+            message.textContent = error.message;
+            return;
+        }
+
+        message.textContent =
+            "Account created! Check your email for confirmation.";
+
+        signupForm.reset();
+
+    } catch (error) {
+
+        message.textContent =
+            "Something went wrong. Please try again.";
+
+        console.error(error);
+    }
+
+});
+
+</script>
+
 </body>
-</html>
+  </html>
