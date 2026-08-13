@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MR BILLA DLR - Video</title>
-    <link rel="stylesheet" href="style.css">
+
+    <title>MR BILLA DLR - Gallery</title>
+
+    <link rel="stylesheet" href="Style.css">
 </head>
 
 <body>
@@ -14,52 +15,26 @@
 
     <h1>🔥 MR BILLA DLR 🔥</h1>
 
-    <h2>📸 My Photo</h2>
+    <h2>Pictures</h2>
 
-    <img class="gallery-photo"
-         src="IMG-20260728-WA0143.jpg"
-         alt="MR BILLA Photo">
+    <img class="gallery-img" src="banner.png.png" alt="MR BILLA DLR">
 
-    <h2>🎥 My Video</h2>
+    <h2>Videos</h2>
 
-    <video id="myVideo"
-           class="my-video"
-           controls
-           autoplay
-           muted
-           playsinline>
-        <source src="VID-20260804-WA0001.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+    <video class="gallery-video" controls>
+        <source src="VID-20260804-WA0.mp4" type="video/mp4">
+        Your browser does not support video.
     </video>
 
     <br><br>
 
-    <a href="https://wa.me/923326657632?text=Assalam%20Alaikum%20MR%20BILLA"
-       target="_blank">
-        <img class="whatsapp"
-             src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-             width="60"
-             height="60"
-             alt="WhatsApp">
-    </a>
+    <a href="index.html" class="start-btn">BACK</a>
 
-    <br><br>
-
-    <a href="index.html">
-        <button>⬅ BACK</button>
-    </a>
+    <footer>
+        © 2026 MR BILLA DLR
+    </footer>
 
 </div>
-
-<script>
-    const video = document.getElementById("myVideo");
-
-    window.addEventListener("load", function() {
-        video.play().catch(function() {
-            console.log("Autoplay blocked by browser.");
-        });
-    });
-</script>
 
 </body>
 </html>
