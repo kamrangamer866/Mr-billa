@@ -2,14 +2,12 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Dashboard</title>
 
 <link rel="stylesheet" href="Style.css">
-
 </head>
 
 <body>
@@ -18,7 +16,9 @@
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
-<h2>ADMIN DASHBOARD</h2>
+<h2>🔐 ADMIN DASHBOARD</h2>
+
+<p id="adminEmail"></p>
 
 
 <h3>📸 Upload Picture</h3>
@@ -112,10 +112,7 @@ async function checkAdmin() {
         await supabaseClient.auth.getSession();
 
 
-    if (
-        error ||
-        !data.session
-    ) {
+    if (error || !data.session) {
 
         window.location.href =
             "login.html";
@@ -124,18 +121,25 @@ async function checkAdmin() {
     }
 
 
-    if (
+    const loggedInEmail =
         data.session.user.email
-        .toLowerCase()
-        !== ADMIN_EMAIL
-    ) {
+        .toLowerCase();
+
+
+    if (loggedInEmail !== ADMIN_EMAIL) {
 
         await supabaseClient.auth.signOut();
 
         window.location.href =
             "login.html";
 
+        return;
     }
+
+
+    document.getElementById("adminEmail")
+        .textContent =
+        "Logged in as: " + loggedInEmail;
 
 }
 
@@ -147,20 +151,17 @@ checkAdmin();
 async function uploadImage() {
 
     const file =
-        document
-        .getElementById("imageFile")
+        document.getElementById("imageFile")
         .files[0];
 
-
     const message =
-        document
-        .getElementById("message");
+        document.getElementById("message");
 
 
     if (!file) {
 
         message.textContent =
-            "❌ Picture select karo.";
+            "❌ Please select a picture.";
 
         return;
     }
@@ -171,9 +172,7 @@ async function uploadImage() {
 
 
     const fileName =
-        Date.now() +
-        "_" +
-        file.name;
+        Date.now() + "_" + file.name;
 
 
     const {
@@ -190,7 +189,8 @@ async function uploadImage() {
     if (error) {
 
         message.textContent =
-            "❌ " + error.message;
+            "❌ Upload failed: " +
+            error.message;
 
         return;
     }
@@ -200,9 +200,8 @@ async function uploadImage() {
         "✅ Picture uploaded successfully!";
 
 
-    document
-    .getElementById("imageFile")
-    .value = "";
+    document.getElementById("imageFile")
+        .value = "";
 
 }
 
@@ -211,20 +210,17 @@ async function uploadImage() {
 async function uploadVideo() {
 
     const file =
-        document
-        .getElementById("videoFile")
+        document.getElementById("videoFile")
         .files[0];
 
-
     const message =
-        document
-        .getElementById("message");
+        document.getElementById("message");
 
 
     if (!file) {
 
         message.textContent =
-            "❌ Video select karo.";
+            "❌ Please select a video.";
 
         return;
     }
@@ -235,9 +231,7 @@ async function uploadVideo() {
 
 
     const fileName =
-        Date.now() +
-        "_" +
-        file.name;
+        Date.now() + "_" + file.name;
 
 
     const {
@@ -254,7 +248,8 @@ async function uploadVideo() {
     if (error) {
 
         message.textContent =
-            "❌ " + error.message;
+            "❌ Upload failed: " +
+            error.message;
 
         return;
     }
@@ -264,9 +259,8 @@ async function uploadVideo() {
         "✅ Video uploaded successfully!";
 
 
-    document
-    .getElementById("videoFile")
-    .value = "";
+    document.getElementById("videoFile")
+        .value = "";
 
 }
 
