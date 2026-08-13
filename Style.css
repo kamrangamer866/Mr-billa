@@ -1,24 +1,166 @@
-/* SIGN UP Button */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    min-height:100vh;
+}
+
+.card{
+    width:100%;
+    max-width:600px;
+    margin:auto;
+    padding:20px;
+}
+
+.banner{
+    width:100%;
+    max-width:600px;
+    border-radius:10px;
+    margin-bottom:25px;
+}
+
+h1{
+    font-size:32px;
+    margin:20px 0;
+    text-shadow:0 0 10px red;
+}
+
+h2{
+    font-size:24px;
+    margin:20px 0;
+    text-shadow:0 0 10px red;
+}
+
+.start-btn{
+    display:inline-block;
+    background:#e00000;
+    color:#fff;
+    text-decoration:none;
+    padding:15px 60px;
+    font-size:28px;
+    font-weight:bold;
+    border-radius:10px;
+    border:2px solid #ff3333;
+    box-shadow:0 0 20px red;
+    transition:.3s;
+}
+
+.start-btn:hover{
+    background:red;
+}
 
 .signup-btn{
-display:inline-block;
-background:#0066ff;
-color:#fff;
-text-decoration:none;
-padding:15px 60px;
-border-radius:10px;
-font-size:28px;
-font-weight:bold;
-margin:15px auto 30px;
-box-shadow:0 0 20px #0066ff;
-border:2px solid #3399ff;
-transition:0.3s;
+    display:inline-block;
+    background:#0066ff;
+    color:#fff;
+    text-decoration:none;
+    padding:15px 60px;
+    font-size:28px;
+    font-weight:bold;
+    border-radius:10px;
+    border:2px solid #3399ff;
+    box-shadow:0 0 20px #0066ff;
+    transition:.3s;
 }
 
 .signup-btn:hover{
-background:#0050d4;
+    background:#0055dd;
 }
 
-.signup-btn:active{
-transform:scale(0.95);
+.input-box{
+    width:100%;
+    max-width:400px;
+    padding:15px;
+    background:#111;
+    color:#fff;
+    border:2px solid red;
+    border-radius:10px;
+    font-size:18px;
+    outline:none;
+}
+
+.input-box::placeholder{
+    color:#aaa;
+}
+/* Gallery Image */
+.gallery-img{
+    width:100%;
+    max-width:550px;
+    display:block;
+    margin:20px auto;
+    border:2px solid red;
+    border-radius:12px;
+    box-shadow:0 0 15px red;
+}
+
+/* Gallery Video */
+.gallery-video{
+    width:100%;
+    max-width:550px;
+    display:block;
+    margin:20px auto;
+    border:2px solid red;
+    border-radius:12px;
+    box-shadow:0 0 15px red;
+    background:#111;
+}
+
+/* WhatsApp */
+.whatsapp{
+    width:45px;
+    height:45px;
+    margin-top:20px;
+    transition:.3s;
+}
+
+.whatsapp:hover{
+    transform:scale(1.1);
+}
+
+/* Footer */
+footer{
+    margin-top:30px;
+    padding:20px;
+    font-size:18px;
+    font-weight:bold;
+    color:#fff;
+}
+
+/* Mobile */
+@media(max-width:600px){
+
+    .card{
+        padding:15px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    h2{
+        font-size:22px;
+    }
+
+    .start-btn,
+    .signup-btn{
+        width:90%;
+        font-size:24px;
+        padding:14px;
+    }
+
+    .input-box{
+        width:90%;
+        font-size:16px;
+    }
+
+    footer{
+        font-size:16px;
+    }
 }
