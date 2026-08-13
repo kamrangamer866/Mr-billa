@@ -1,40 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>MR BILLA DLR - Gallery</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="Style.css">
+<title>MR BILLA DLR - Gallery</title>
+
+<link rel="stylesheet" href="Style.css">
+
 </head>
 
 <body>
 
 <div class="card">
 
-    <h1>🔥 MR BILLA DLR 🔥</h1>
+<h1>🔥 MR BILLA DLR 🔥</h1>
 
-    <h2>Pictures</h2>
 
-    <img class="gallery-img" src="banner.png.png" alt="MR BILLA DLR">
+<!-- ========================= -->
+<!-- PICTURES -->
+<!-- ========================= -->
 
-    <h2>Videos</h2>
+<h2>Pictures</h2>
 
-    <video class="gallery-video" controls>
-        <source src="VID-20260804-WA0001" type="video/mp4">
-        Your browser does not support video.
-    </video>
+<div id="pictures">
+    <p>Loading pictures...</p>
+</div>
 
-    <br><br>
 
-    <a href="index.html" class="start-btn">BACK</a>
+<!-- ========================= -->
+<!-- VIDEOS -->
+<!-- ========================= -->
 
-    <footer>
-        © 2026 MR BILLA DLR
-    </footer>
+<h2>Videos</h2>
+
+<div id="videos">
+    <p>Loading videos...</p>
+</div>
+
+
+<br><br>
+
+<a href="index.html" class="start-btn">
+BACK
+</a>
+
+
+<footer>
+© 2026 MR BILLA DLR
+</footer>
 
 </div>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase.js"></script>
+
+
+<script>
+
+// ============================
+// LOAD PICTURES
+// ============================
+
+async function loadPictures() {
+
+    const picturesBox =
+        document.getElementById("pictures");
+
+    const { data, error } =
+        await supabase.storage
+        .from("uploads")
+        .list("images", {
+            limit: 100,
+            sortBy: {
+                column: "name",
+                order: "desc"
+            }
+        });
+
+
+    if (error) {
+
+        picturesBox.innerHTML =
+            "<p>❌ " + error.message + "</p>";
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        picturesBox.innerHTML =
+            "<p>No pictures uploaded yet.</p>";
+
+        return;
+    }
+
+
+    picturesBox.innerHTML = "";
+
+
+    data.forEach(function(file) {
+
+        const { data: urlData } =
+            supabase.storage
+            .from("uploads")
+            .getPublicUrl(
+                "images/" + file.name
+            );
+
+
+        const img =
+            document.createElement("img");
+
+        img.className =
+            "gallery-img";
+
+        img.src =
+            urlData.publicUrl;
+
+        img.alt =
+            "MR BILLA DLR";
+
+
+        picturesBox.appendChild(img);
+
+    });
+
+}
+
+
+// ============================
+// LOAD VIDEOS
+// ============================
+
+async function loadVideos() {
+
+    const videosBox =
+        document.getElementById("videos");
+
+
+    const { data, error } =
+        await supabase.storage
+        .from("uploads")
+        .list("videos", {
+            limit: 100,
+            sortBy: {
+                column: "name",
+                order: "desc"
+            }
+        });
+
+
+    if (error) {
+
+        videosBox.innerHTML =
+            "<p>❌ " + error.message + "</p>";
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        videosBox.innerHTML =
+            "<p>No videos uploaded yet.</p>";
+
+        return;
+    }
+
+
+    videosBox.innerHTML = "";
+
+
+    data.forEach(function(file) {
+
+        const { data: urlData } =
+            supabase.storage
+            .from("uploads")
+            .getPublicUrl(
+                "videos/" + file.name
+            );
+
+
+        const video =
+            document.createElement("video");
+
+        video.className =
+            "gallery-video";
+
+        video.controls = true;
+
+        video.playsInline = true;
+
+        video.src =
+            urlData.publicUrl;
+
+
+        videosBox.appendChild(video);
+
+    });
+
+}
+
+
+// ============================
+// START
+// ============================
+
+loadPictures();
+
+loadVideos();
+
+</script>
+
 
 </body>
 </html>
