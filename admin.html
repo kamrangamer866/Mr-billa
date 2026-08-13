@@ -78,11 +78,16 @@ async function checkAdmin() {
 
     if (!data.session) {
         window.location.href = "login.html";
+        return;
     }
 }
 
 checkAdmin();
 
+
+// =========================
+// UPLOAD PICTURE
+// =========================
 
 async function uploadImage() {
 
@@ -93,28 +98,35 @@ async function uploadImage() {
         return;
     }
 
-    document.getElementById("message").textContent =
-        "Uploading picture...";
+    const message = document.getElementById("message");
+
+    message.textContent = "Uploading picture...";
 
     const fileName =
         Date.now() + "_" + file.name;
 
     const { error } = await supabase.storage
-        .from("gallery")
+        .from("uploads")
         .upload("images/" + fileName, file);
 
     if (error) {
-        document.getElementById("message").textContent =
-            error.message;
+
+        message.textContent =
+            "Upload failed: " + error.message;
+
         return;
     }
 
-    document.getElementById("message").textContent =
-        "Picture uploaded successfully!";
+    message.textContent =
+        "✅ Picture uploaded successfully!";
 
     document.getElementById("imageFile").value = "";
 }
 
+
+// =========================
+// UPLOAD VIDEO
+// =========================
 
 async function uploadVideo() {
 
@@ -125,28 +137,35 @@ async function uploadVideo() {
         return;
     }
 
-    document.getElementById("message").textContent =
-        "Uploading video...";
+    const message = document.getElementById("message");
+
+    message.textContent = "Uploading video...";
 
     const fileName =
         Date.now() + "_" + file.name;
 
     const { error } = await supabase.storage
-        .from("gallery")
+        .from("uploads")
         .upload("videos/" + fileName, file);
 
     if (error) {
-        document.getElementById("message").textContent =
-            error.message;
+
+        message.textContent =
+            "Upload failed: " + error.message;
+
         return;
     }
 
-    document.getElementById("message").textContent =
-        "Video uploaded successfully!";
+    message.textContent =
+        "✅ Video uploaded successfully!";
 
     document.getElementById("videoFile").value = "";
 }
 
+
+// =========================
+// LOGOUT
+// =========================
 
 async function logout() {
 
