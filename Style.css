@@ -1,68 +1,55 @@
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
+}
+
+body {
     background: #000;
+    color: white;
     font-family: Arial, sans-serif;
     text-align: center;
-    color: white;
 }
 
 .card {
-    width: 50%;
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 15px;
 }
 
 .banner {
-    width: 50%;
+    width: 100%;
+    max-width: 500px;
     display: block;
+    margin: 0 auto 20px;
+    border-radius: 8px;
 }
 
 button {
-    display: block;
-    width: 50%;
-    margin: 0;
-    padding: 20px 0;
-    background: #00c853;
-    color: #fff;
-    font-size: 30px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #00e676;
-}
-
-h1 {
-    margin: 20px 0;
-    font-size: 30px;
-}
-
-h2 {
-    margin: 20px 0 10px;
+    background: #ff0000;
+    color: white;
+    border: 2px solid #ff3333;
+    border-radius: 10px;
+    padding: 12px 35px;
     font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 15px red;
 }
 
-.gallery-photo {
-    width: 100%;
-    display: block;
-}
-
-.my-video {
-    width: 100%;
-    display: block;
-    background: #000;
+button:active {
+    transform: scale(0.95);
 }
 
 .whatsapp {
-    display: inline-block;
+    margin-top: 25px;
+    width: 40px;
+    height: 40px;
 }
 
 footer {
-    margin: 20px 0;
-    padding-bottom: 20px;
-    color: white;
-    font-size: 16px;
+    margin-top: 30px;
+    font-size: 18px;
+    font-weight: bold;
 }
