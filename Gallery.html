@@ -1,57 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Gallery</title>
 
-<link rel="stylesheet" href="Style.css">
+<link rel="stylesheet"
+      href="Style.css">
 
 </head>
 
+
 <body>
 
+
 <div class="card">
+
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
 
-<!-- ========================= -->
-<!-- PICTURES -->
-<!-- ========================= -->
-
 <h2>Pictures</h2>
 
-<div id="pictures">
-    <p>Loading pictures...</p>
+<div id="images">
+    Loading pictures...
 </div>
 
-
-<!-- ========================= -->
-<!-- VIDEOS -->
-<!-- ========================= -->
 
 <h2>Videos</h2>
 
 <div id="videos">
-    <p>Loading videos...</p>
+    Loading videos...
 </div>
 
 
 <br><br>
 
-<a href="index.html" class="start-btn">
+
+<a href="index.html"
+   class="start-btn">
+
 BACK
+
 </a>
 
 
 <footer>
+
 © 2026 MR BILLA DLR
+
 </footer>
 
+
 </div>
+
 
 
 <!-- SUPABASE -->
@@ -61,164 +68,191 @@ BACK
 <script src="supabase.js"></script>
 
 
+
 <script>
 
-// ============================
-// LOAD PICTURES
-// ============================
 
-async function loadPictures() {
+async function loadGallery() {
 
-    const picturesBox =
-        document.getElementById("pictures");
 
-    const { data, error } =
+    const images =
+        document.getElementById("images");
+
+    const videos =
+        document.getElementById("videos");
+
+
+    // =========================
+    // LOAD PICTURES
+    // =========================
+
+    const { data: imageFiles, error: imageError } =
         await supabase.storage
         .from("uploads")
         .list("images", {
             limit: 100,
             sortBy: {
-                column: "name",
+                column: "created_at",
                 order: "desc"
             }
         });
 
 
-    if (error) {
+    if (imageError) {
 
-        picturesBox.innerHTML =
-            "<p>❌ " + error.message + "</p>";
+        images.innerHTML =
+            "❌ Pictures load nahi ho sakin.";
 
-        return;
+        console.error(imageError);
+
     }
 
+    else if (!imageFiles || imageFiles.length === 0) {
 
-    if (!data || data.length === 0) {
+        images.innerHTML =
+            "No pictures uploaded yet.";
 
-        picturesBox.innerHTML =
-            "<p>No pictures uploaded yet.</p>";
-
-        return;
     }
 
+    else {
 
-    picturesBox.innerHTML = "";
+        images.innerHTML = "";
 
 
-    data.forEach(function(file) {
+        imageFiles.forEach(function(file) {
 
-        const { data: urlData } =
-            supabase.storage
-            .from("uploads")
-            .getPublicUrl(
-                "images/" + file.name
+
+            const { data } =
+                supabase.storage
+                .from("uploads")
+                .getPublicUrl(
+                    "images/" + file.name
+                );
+
+
+            const img =
+                document.createElement("img");
+
+
+            img.src = data.publicUrl;
+
+            img.className =
+                "gallery-img";
+
+            img.alt =
+                "MR BILLA DLR";
+
+
+            images.appendChild(img);
+
+
+            images.appendChild(
+                document.createElement("br")
             );
 
+        });
 
-        const img =
-            document.createElement("img");
-
-        img.className =
-            "gallery-img";
-
-        img.src =
-            urlData.publicUrl;
-
-        img.alt =
-            "MR BILLA DLR";
+    }
 
 
-        picturesBox.appendChild(img);
 
-    });
+    // =========================
+    // LOAD VIDEOS
+    // =========================
 
-}
-
-
-// ============================
-// LOAD VIDEOS
-// ============================
-
-async function loadVideos() {
-
-    const videosBox =
-        document.getElementById("videos");
-
-
-    const { data, error } =
+    const { data: videoFiles, error: videoError } =
         await supabase.storage
         .from("uploads")
         .list("videos", {
             limit: 100,
             sortBy: {
-                column: "name",
+                column: "created_at",
                 order: "desc"
             }
         });
 
 
-    if (error) {
+    if (videoError) {
 
-        videosBox.innerHTML =
-            "<p>❌ " + error.message + "</p>";
+        videos.innerHTML =
+            "❌ Videos load nahi ho sakin.";
 
-        return;
+        console.error(videoError);
+
     }
 
+    else if (!videoFiles || videoFiles.length === 0) {
 
-    if (!data || data.length === 0) {
+        videos.innerHTML =
+            "No videos uploaded yet.";
 
-        videosBox.innerHTML =
-            "<p>No videos uploaded yet.</p>";
-
-        return;
     }
 
+    else {
 
-    videosBox.innerHTML = "";
+        videos.innerHTML = "";
 
 
-    data.forEach(function(file) {
+        videoFiles.forEach(function(file) {
 
-        const { data: urlData } =
-            supabase.storage
-            .from("uploads")
-            .getPublicUrl(
-                "videos/" + file.name
+
+            const { data } =
+                supabase.storage
+                .from("uploads")
+                .getPublicUrl(
+                    "videos/" + file.name
+                );
+
+
+            const video =
+                document.createElement("video");
+
+
+            video.className =
+                "gallery-video";
+
+            video.controls = true;
+
+            video.playsInline = true;
+
+
+            const source =
+                document.createElement("source");
+
+
+            source.src =
+                data.publicUrl;
+
+            source.type =
+                "video/mp4";
+
+
+            video.appendChild(source);
+
+
+            videos.appendChild(video);
+
+
+            videos.appendChild(
+                document.createElement("br")
             );
 
+            videos.appendChild(
+                document.createElement("br")
+            );
 
-        const video =
-            document.createElement("video");
+        });
 
-        video.className =
-            "gallery-video";
-
-        video.controls = true;
-
-        video.playsInline = true;
-
-        video.src =
-            urlData.publicUrl;
-
-
-        videosBox.appendChild(video);
-
-    });
+    }
 
 }
 
 
-// ============================
-// START
-// ============================
-
-loadPictures();
-
-loadVideos();
+loadGallery();
 
 </script>
 
 
 </body>
+
 </html>
