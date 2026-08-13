@@ -1,42 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MR BILLA Gallery</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR BILLA DLR - Video</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="card">
 
-<h1>🔥 MR BILLA 🔥</h1>
+    <h1>🔥 MR BILLA DLR 🔥</h1>
 
-<h2>📸 My Photo</h2>
+    <h2>📸 My Photo</h2>
 
-<img src="photo1.jpg" alt="My Photo">
+    <img class="gallery-photo"
+         src="IMG-20260728-WA0143.jpg"
+         alt="MR BILLA Photo">
 
-<h2>🎥 My Video</h2>
+    <h2>🎥 My Video</h2>
 
-<video width="100%" controls>
-    <source src="VID-20260804-WA0001.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+    <video id="myVideo"
+           class="my-video"
+           controls
+           autoplay
+           muted
+           playsinline>
+        <source src="VID-20260804-WA0001.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
-<br><br>
+    <br><br>
 
-<a href="https://wa.me/923326667632" class="whatsapp" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="60">
-</a>
+    <a href="https://wa.me/923326657632?text=Assalam%20Alaikum%20MR%20BILLA"
+       target="_blank">
+        <img class="whatsapp"
+             src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+             width="60"
+             height="60"
+             alt="WhatsApp">
+    </a>
 
-<br><br>
+    <br><br>
 
-<a href="index.html">
-<button>⬅ Back</button>
-</a>
+    <a href="index.html">
+        <button>⬅ BACK</button>
+    </a>
 
 </div>
+
+<script>
+    const video = document.getElementById("myVideo");
+
+    window.addEventListener("load", function() {
+        video.play().catch(function() {
+            console.log("Autoplay blocked by browser.");
+        });
+    });
+</script>
 
 </body>
 </html>
