@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Login</title>
 
 <link rel="stylesheet" href="Style.css">
+
 </head>
 
 <body>
@@ -63,50 +65,106 @@ BACK
 
 </div>
 
+
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
+
 
 <script>
 
-const loginForm = document.getElementById("loginForm");
-const message = document.getElementById("message");
+const loginForm =
+    document.getElementById("loginForm");
 
-loginForm.addEventListener("submit", async function(event) {
+const message =
+    document.getElementById("message");
 
-    event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+loginForm.addEventListener(
+    "submit",
+    async function(event) {
 
-    message.textContent = "Logging in...";
+        event.preventDefault();
 
-    try {
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
+        const email =
+            document.getElementById("email")
+            .value
+            .trim();
 
-        if (error) {
-            message.textContent = error.message;
-            return;
-        }
+        const password =
+            document.getElementById("password")
+            .value;
 
-        message.textContent = "Login successful!";
-
-        // Admin panel par bhejo
-        window.location.href = "admin.html";
-
-    } catch (error) {
 
         message.textContent =
-            "Something went wrong. Please try again.";
+            "Logging in...";
 
-        console.error(error);
+
+        try {
+
+            if (typeof supabase === "undefined") {
+
+                message.textContent =
+                    "❌ Supabase connection not found.";
+
+                return;
+            }
+
+
+            const { data, error } =
+                await supabase.auth.signInWithPassword({
+
+                    email: email,
+
+                    password: password
+
+                });
+
+
+            if (error) {
+
+                message.textContent =
+                    "❌ " + error.message;
+
+                return;
+            }
+
+
+            if (!data.session) {
+
+                message.textContent =
+                    "❌ Login session was not created.";
+
+                return;
+            }
+
+
+            message.textContent =
+                "✅ Login successful!";
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "admin.html";
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                "❌ " + error.message;
+
+        }
+
     }
 
-});
+);
 
 </script>
 
