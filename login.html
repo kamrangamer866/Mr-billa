@@ -4,53 +4,41 @@
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Login</title>
 
-<link rel="stylesheet"
-      href="Style.css">
+<link rel="stylesheet" href="Style.css">
 
 </head>
 
-
 <body>
-
 
 <div class="card">
 
-
 <h1>🔐 ADMIN LOGIN</h1>
 
-
 <form id="loginForm">
-
 
 <input
     type="email"
     id="email"
     class="input-box"
-    placeholder="Enter Email"
+    placeholder="Admin Email"
     required
 >
 
-
 <br><br>
-
 
 <input
     type="password"
     id="password"
     class="input-box"
-    placeholder="Enter Password"
+    placeholder="Password"
     required
 >
 
-
 <br><br>
-
 
 <button
     type="submit"
@@ -60,15 +48,11 @@ LOGIN
 
 </button>
 
-
 </form>
-
 
 <p id="message"></p>
 
-
 <br>
-
 
 <button
     type="button"
@@ -79,71 +63,40 @@ FORGOT PASSWORD?
 
 </button>
 
-
 <br><br>
 
-
-<a href="signup.html"
-   class="signup-btn">
-
-SIGN UP
-
-</a>
-
-
-<br><br>
-
-
-<a href="index.html"
-   class="start-btn">
-
+<a href="index.html" class="start-btn">
 BACK
-
 </a>
-
 
 <footer>
-
 © 2026 MR BILLA DLR
-
 </footer>
-
 
 </div>
 
 
-
-<!-- Supabase Library -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-<!-- Supabase Connection -->
 
 <script src="supabase.js"></script>
 
 
-
 <script>
+
+const ADMIN_EMAIL =
+    "kamrangamer866@gmail.com";
 
 
 const loginForm =
     document.getElementById("loginForm");
 
-
 const message =
     document.getElementById("message");
 
 
-
-// ============================
-// LOGIN
-// ============================
-
 loginForm.addEventListener(
     "submit",
     async function(event) {
-
 
         event.preventDefault();
 
@@ -152,7 +105,8 @@ loginForm.addEventListener(
             document
             .getElementById("email")
             .value
-            .trim();
+            .trim()
+            .toLowerCase();
 
 
         const password =
@@ -161,27 +115,29 @@ loginForm.addEventListener(
             .value;
 
 
+        /*
+         * ONLY ADMIN EMAIL ALLOWED
+         */
+
+        if (email !== ADMIN_EMAIL) {
+
+            message.textContent =
+                "❌ This email is not the Admin account.";
+
+            return;
+        }
+
+
         message.textContent =
             "Logging in...";
 
 
         try {
 
-
-            if (
-                typeof supabaseClient ===
-                "undefined"
-            ) {
-
-                message.textContent =
-                    "❌ Supabase connection not found.";
-
-                return;
-
-            }
-
-
-            const { data, error } =
+            const {
+                data,
+                error
+            } =
                 await supabaseClient.auth
                 .signInWithPassword({
 
@@ -198,7 +154,6 @@ loginForm.addEventListener(
                     "❌ " + error.message;
 
                 return;
-
             }
 
 
@@ -208,12 +163,11 @@ loginForm.addEventListener(
                     "❌ Login session was not created.";
 
                 return;
-
             }
 
 
             message.textContent =
-                "✅ Login successful!";
+                "✅ Admin login successful!";
 
 
             setTimeout(function() {
@@ -222,7 +176,6 @@ loginForm.addEventListener(
                     "admin.html";
 
             }, 500);
-
 
         }
 
@@ -236,64 +189,52 @@ loginForm.addEventListener(
         }
 
     }
-
 );
 
 
-
-// ============================
-// FORGOT PASSWORD
-// ============================
+/*
+ * FORGOT PASSWORD
+ */
 
 async function forgotPassword() {
-
 
     const email =
         document
         .getElementById("email")
         .value
-        .trim();
+        .trim()
+        .toLowerCase();
 
 
-    if (!email) {
+    if (email !== ADMIN_EMAIL) {
 
         message.textContent =
-            "❌ Pehle apni email enter karo.";
+            "❌ Admin email enter karo.";
 
         return;
-
     }
 
 
     message.textContent =
-        "Sending password reset email...";
+        "Sending reset email...";
 
 
     try {
 
-
-        if (
-            typeof supabaseClient ===
-            "undefined"
-        ) {
-
-            message.textContent =
-                "❌ Supabase connection not found.";
-
-            return;
-
-        }
-
-
-        const { error } =
+        const {
+            error
+        } =
             await supabaseClient.auth
             .resetPasswordForEmail(
-                email,
+
+                ADMIN_EMAIL,
+
                 {
                     redirectTo:
                         window.location.origin +
                         "/reset-password.html"
                 }
+
             );
 
 
@@ -303,19 +244,15 @@ async function forgotPassword() {
                 "❌ " + error.message;
 
             return;
-
         }
 
 
         message.textContent =
-            "✅ Password reset email sent! Apni email check karo.";
-
+            "✅ Password reset email sent. Gmail check karo.";
 
     }
 
     catch (error) {
-
-        console.error(error);
 
         message.textContent =
             "❌ " + error.message;
@@ -324,10 +261,7 @@ async function forgotPassword() {
 
 }
 
-
 </script>
 
-
 </body>
-
 </html>
