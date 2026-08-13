@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Login</title>
 
-<link rel="stylesheet" href="Style.css">
+<link rel="stylesheet"
+      href="Style.css">
 
 </head>
 
+
 <body>
+
 
 <div class="card">
 
+
 <h1>🔐 ADMIN LOGIN</h1>
 
+
 <form id="loginForm">
+
 
 <input
     type="email"
@@ -27,7 +36,9 @@
     required
 >
 
+
 <br><br>
+
 
 <input
     type="password"
@@ -37,65 +48,118 @@
     required
 >
 
+
 <br><br>
 
-<button type="submit" class="start-btn">
+
+<button
+    type="submit"
+    class="start-btn">
+
 LOGIN
+
 </button>
+
 
 </form>
 
+
 <p id="message"></p>
+
 
 <br>
 
-<a href="signup.html" class="signup-btn">
-SIGN UP
-</a>
+
+<button
+    type="button"
+    onclick="forgotPassword()"
+    class="signup-btn">
+
+FORGOT PASSWORD?
+
+</button>
+
 
 <br><br>
 
-<a href="index.html" class="start-btn">
-BACK
+
+<a href="signup.html"
+   class="signup-btn">
+
+SIGN UP
+
 </a>
 
+
+<br><br>
+
+
+<a href="index.html"
+   class="start-btn">
+
+BACK
+
+</a>
+
+
 <footer>
+
 © 2026 MR BILLA DLR
+
 </footer>
+
 
 </div>
 
 
+
 <!-- Supabase Library -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
 <!-- Supabase Connection -->
+
 <script src="supabase.js"></script>
+
 
 
 <script>
 
+
 const loginForm =
     document.getElementById("loginForm");
+
 
 const message =
     document.getElementById("message");
 
 
+
+// ============================
+// LOGIN
+// ============================
+
 loginForm.addEventListener(
     "submit",
     async function(event) {
 
+
         event.preventDefault();
 
+
         const email =
-            document.getElementById("email")
+            document
+            .getElementById("email")
             .value
             .trim();
 
+
         const password =
-            document.getElementById("password")
+            document
+            .getElementById("password")
             .value;
+
 
         message.textContent =
             "Logging in...";
@@ -103,17 +167,23 @@ loginForm.addEventListener(
 
         try {
 
-            if (typeof supabaseClient === "undefined") {
+
+            if (
+                typeof supabaseClient ===
+                "undefined"
+            ) {
 
                 message.textContent =
                     "❌ Supabase connection not found.";
 
                 return;
+
             }
 
 
             const { data, error } =
-                await supabaseClient.auth.signInWithPassword({
+                await supabaseClient.auth
+                .signInWithPassword({
 
                     email: email,
 
@@ -128,6 +198,7 @@ loginForm.addEventListener(
                     "❌ " + error.message;
 
                 return;
+
             }
 
 
@@ -137,6 +208,7 @@ loginForm.addEventListener(
                     "❌ Login session was not created.";
 
                 return;
+
             }
 
 
@@ -152,7 +224,9 @@ loginForm.addEventListener(
             }, 500);
 
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             console.error(error);
 
@@ -165,7 +239,95 @@ loginForm.addEventListener(
 
 );
 
+
+
+// ============================
+// FORGOT PASSWORD
+// ============================
+
+async function forgotPassword() {
+
+
+    const email =
+        document
+        .getElementById("email")
+        .value
+        .trim();
+
+
+    if (!email) {
+
+        message.textContent =
+            "❌ Pehle apni email enter karo.";
+
+        return;
+
+    }
+
+
+    message.textContent =
+        "Sending password reset email...";
+
+
+    try {
+
+
+        if (
+            typeof supabaseClient ===
+            "undefined"
+        ) {
+
+            message.textContent =
+                "❌ Supabase connection not found.";
+
+            return;
+
+        }
+
+
+        const { error } =
+            await supabaseClient.auth
+            .resetPasswordForEmail(
+                email,
+                {
+                    redirectTo:
+                        window.location.origin +
+                        "/reset-password.html"
+                }
+            );
+
+
+        if (error) {
+
+            message.textContent =
+                "❌ " + error.message;
+
+            return;
+
+        }
+
+
+        message.textContent =
+            "✅ Password reset email sent! Apni email check karo.";
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        message.textContent =
+            "❌ " + error.message;
+
+    }
+
+}
+
+
 </script>
 
+
 </body>
+
 </html>
