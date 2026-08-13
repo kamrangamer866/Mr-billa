@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Sign Up</title>
 
-<link rel="stylesheet" href="Style.css">
+<link rel="stylesheet"
+      href="Style.css">
+
 </head>
+
 
 <body>
 
+
 <div class="card">
+
 
 <h1>🔥 ADMIN SIGN UP 🔥</h1>
 
+
 <form id="signupForm">
+
 
 <input
     type="text"
@@ -25,7 +36,9 @@
     required
 >
 
+
 <br><br>
+
 
 <input
     type="email"
@@ -35,96 +48,216 @@
     required
 >
 
+
 <br><br>
+
 
 <input
     type="password"
     id="password"
     class="input-box"
     placeholder="Password"
+    minlength="6"
+    placeholder="Password"
     required
 >
 
+
 <br><br>
 
-<button type="submit" class="signup-btn">
+
+<button
+    type="submit"
+    class="signup-btn">
+
 CREATE ACCOUNT
+
 </button>
+
 
 </form>
 
+
 <p id="message"></p>
+
 
 <br>
 
-<a href="login.html" class="start-btn">
+
+<a href="login.html"
+   class="start-btn">
+
 LOGIN
+
 </a>
+
 
 <br><br>
 
-<a href="index.html" class="start-btn">
+
+<a href="index.html"
+   class="start-btn">
+
 BACK
+
 </a>
 
+
 <footer>
+
 © 2026 MR BILLA DLR
+
 </footer>
+
 
 </div>
 
-<!-- Supabase -->
+
+
+<!-- ====================== -->
+<!-- SUPABASE -->
+<!-- ====================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
+
+
 
 <script>
 
-const signupForm = document.getElementById("signupForm");
-const message = document.getElementById("message");
 
-signupForm.addEventListener("submit", async function(event) {
+const signupForm =
+    document.getElementById("signupForm");
 
-    event.preventDefault();
 
-    const username = document.getElementById("username").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+const message =
+    document.getElementById("message");
 
-    message.textContent = "Creating account...";
 
-    try {
 
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    username: username
-                }
+signupForm.addEventListener(
+    "submit",
+    async function(event) {
+
+
+        event.preventDefault();
+
+
+
+        const username =
+            document
+            .getElementById("username")
+            .value
+            .trim();
+
+
+
+        const email =
+            document
+            .getElementById("email")
+            .value
+            .trim();
+
+
+
+        const password =
+            document
+            .getElementById("password")
+            .value;
+
+
+
+        message.textContent =
+            "Creating account...";
+
+
+
+        try {
+
+
+            if (typeof supabase === "undefined") {
+
+                message.textContent =
+                    "❌ Supabase connection not found.";
+
+                return;
+
             }
-        });
 
-        if (error) {
-            message.textContent = error.message;
-            return;
+
+
+            const { data, error } =
+                await supabase.auth.signUp({
+
+                    email: email,
+
+                    password: password,
+
+                    options: {
+
+                        data: {
+
+                            username: username
+
+                        }
+
+                    }
+
+                });
+
+
+
+            if (error) {
+
+                message.textContent =
+                    "❌ " + error.message;
+
+                return;
+
+            }
+
+
+
+            if (data.user) {
+
+                message.textContent =
+                    "✅ Account created! Check your email and confirm your account.";
+
+                signupForm.reset();
+
+            } else {
+
+                message.textContent =
+                    "Account creation completed.";
+
+            }
+
+
         }
 
-        message.textContent =
-            "Account created! Check your email for confirmation.";
 
-        signupForm.reset();
+        catch (error) {
 
-    } catch (error) {
 
-        message.textContent =
-            "Something went wrong. Please try again.";
+            console.error(error);
 
-        console.error(error);
+
+            message.textContent =
+                "❌ " + error.message;
+
+
+        }
+
+
     }
 
-});
+);
+
 
 </script>
 
+
 </body>
+
 </html>
