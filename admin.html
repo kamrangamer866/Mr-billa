@@ -8,6 +8,7 @@
 <title>MR BILLA DLR - Admin Dashboard</title>
 
 <link rel="stylesheet" href="Style.css">
+
 </head>
 
 <body>
@@ -20,52 +21,41 @@
 
 <p id="adminEmail"></p>
 
-
 <h3>📸 Upload Picture</h3>
 
 <input
-    type="file"
-    id="imageFile"
-    class="input-box"
-    accept="image/*"
->
+type="file"
+id="imageFile"
+class="input-box"
+accept="image/*">
 
 <br><br>
 
 <button
-    onclick="uploadImage()"
-    class="signup-btn">
-
+onclick="uploadImage()"
+class="signup-btn">
 UPLOAD PICTURE
-
 </button>
 
-
 <br><br>
-
 
 <h3>🎬 Upload Video</h3>
 
 <input
-    type="file"
-    id="videoFile"
-    class="input-box"
-    accept="video/*"
->
+type="file"
+id="videoFile"
+class="input-box"
+accept="video/*">
 
 <br><br>
 
 <button
-    onclick="uploadVideo()"
-    class="signup-btn">
-
+onclick="uploadVideo()"
+class="signup-btn">
 UPLOAD VIDEO
-
 </button>
 
-
 <p id="message"></p>
-
 
 <br>
 
@@ -73,17 +63,13 @@ UPLOAD VIDEO
 VIEW GALLERY
 </a>
 
-
 <br><br>
 
 <button
-    onclick="logout()"
-    class="start-btn">
-
+onclick="logout()"
+class="start-btn">
 LOGOUT
-
 </button>
-
 
 <footer>
 © 2026 MR BILLA DLR
@@ -91,9 +77,7 @@ LOGOUT
 
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script src="supabase.js"></script>
 
 <script>
@@ -101,158 +85,115 @@ LOGOUT
 const CLOUD_NAME = "edquri0f";
 const UPLOAD_PRESET = "Mr billa 11";
 
-const ADMIN_EMAIL =
-    "kamrangamer866@gmail.com";
+const ADMIN_EMAIL = "kamrangamer866@gmail.com";
 
+async function checkAdmin(){
 
-async function checkAdmin() {
+const {data,error}=await supabaseClient.auth.getSession();
 
-    const {
-        data,
-        error
-    } =
-        await supabaseClient.auth.getSession();
-
-
-    if (error || !data.session) {
-
-        window.location.href =
-            "login.html";
-
-        return;
-    }
-
-
-    const loggedInEmail =
-        data.session.user.email
-        .toLowerCase();
-
-
-    if (loggedInEmail !== ADMIN_EMAIL) {
-
-        await supabaseClient.auth.signOut();
-
-        window.location.href =
-            "login.html";
-
-        return;
-    }
-
-
-    document.getElementById("adminEmail")
-        .textContent =
-        "Logged in as: " + loggedInEmail;
-
+if(error || !data.session){
+window.location.href="login.html";
+return;
 }
 
+const loggedInEmail=data.session.user.email.toLowerCase();
+
+if(loggedInEmail!==ADMIN_EMAIL){
+await supabaseClient.auth.signOut();
+window.location.href="login.html";
+return;
+}
+
+document.getElementById("adminEmail").textContent="Logged in as: "+loggedInEmail;
+
+}
 
 checkAdmin();
+    async function uploadImage(){
 
+const file=document.getElementById("imageFile").files[0];
+const message=document.getElementById("message");
 
-
-async function uploadImage() {
-
-    const file = document.getElementById("imageFile").files[0];
-    const message = document.getElementById("message");
-
-    if (!file) {
-        message.textContent = "❌ Please select a picture.";
-        return;
-    }
-
-    message.textContent = "Uploading picture...";
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
-
-    const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
-    const result = await response.json();
-
-    if (result.secure_url) {
-        message.textContent = "✅ Picture uploaded successfully!";
-        console.log(result.secure_url);
-    } else {
-        message.textContent = "❌ " + (result.error?.message || "Upload failed");
-    }
-
-    document.getElementById("imageFile").value = "";
+if(!file){
+message.textContent="❌ Please select a picture.";
+return;
 }
 
+message.textContent="Uploading picture...";
 
+const formData=new FormData();
+formData.append("file",file);
+formData.append("upload_preset",UPLOAD_PRESET);
 
-async function uploadVideo() {
+const response=await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+{
+method:"POST",
+body:formData
+});
 
-    const file =
-        document.getElementById("videoFile")
-        .files[0];
+const result=await response.json();
 
-    const message =
-        document.getElementById("message");
+if(result.secure_url){
 
+message.innerHTML=
+"✅ Picture uploaded successfully!<br><br><a href='"+result.secure_url+"' target='_blank'>View Image</a>";
 
-    if (!file) {
+}else{
 
-        message.textContent =
-            "❌ Please select a video.";
-
-        return;
-    }
-
-
-    message.textContent =
-        "Uploading video...";
-
-
-    const fileName =
-        Date.now() + "_" + file.name;
-
-
-    const {
-        error
-    } =
-        await supabaseClient.storage
-        .from("uploads")
-        .upload(
-            "videos/" + fileName,
-            file
-        );
-
-
-    if (error) {
-
-        message.textContent =
-            "❌ Upload failed: " +
-            error.message;
-
-        return;
-    }
-
-
-    message.textContent =
-        "✅ Video uploaded successfully!";
-
-
-    document.getElementById("videoFile")
-        .value = "";
+message.textContent=
+"❌ "+(result.error?.message || "Upload failed");
 
 }
 
+document.getElementById("imageFile").value="";
 
+    }
+    async function uploadVideo(){
 
-async function logout() {
+const file=document.getElementById("videoFile").files[0];
+const message=document.getElementById("message");
 
-    await supabaseClient.auth.signOut();
+if(!file){
+message.textContent="❌ Please select a video.";
+return;
+}
 
-    window.location.href =
-        "index.html";
+message.textContent="Uploading video...";
+
+const formData=new FormData();
+formData.append("file",file);
+formData.append("upload_preset",UPLOAD_PRESET);
+
+const response=await fetch(
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,
+{
+method:"POST",
+body:formData
+});
+
+const result=await response.json();
+
+if(result.secure_url){
+
+message.innerHTML=
+"✅ Video uploaded successfully!<br><br><a href='"+result.secure_url+"' target='_blank'>Watch Video</a>";
+
+}else{
+
+message.textContent=
+"❌ "+(result.error?.message || "Upload failed");
+
+}
+
+document.getElementById("videoFile").value="";
+
+    } 
+    async function logout(){
+
+await supabaseClient.auth.signOut();
+
+window.location.href="index.html";
 
 }
 
