@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Gallery</title>
@@ -19,229 +19,185 @@
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
+<h2>📦 Products Gallery</h2>
 
-<h2>📸 Pictures</h2>
+<div id="products"></div>
 
-<div id="images">
-Loading pictures...
-</div>
-
-
-<h2>🎬 Videos</h2>
-
-<div id="videos">
-Loading videos...
-</div>
-
-
-<br><br>
+<br>
 
 <a href="index.html" class="start-btn">
-BACK
+
+🏠 HOME
+
 </a>
 
-
-<footer>
-© 2026 MR BILLA DLR
-</footer>
-
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
-
 <script>
 
-async function loadGallery() {
+async function loadProducts(){
 
-    const images =
-        document.getElementById("images");
+const container=document.getElementById("products");
 
-    const videos =
-        document.getElementById("videos");
+container.innerHTML="Loading Products...";
 
+const {data,error}=await supabaseClient
+.from("products")
+.select("*")
+.order("id",{ascending:false});
 
-    /*
-     * IMAGES
-     */
+if(error){
 
-    const {
-        data: imageFiles,
-        error: imageError
-    } =
-        await supabaseClient.storage
-        .from("uploads")
-        .list("images", {
+container.innerHTML="<h3>❌ Failed to load products</h3>";
 
-            limit: 100,
-
-            sortBy: {
-                column: "created_at",
-                order: "desc"
-            }
-
-        });
-
-
-    if (imageError) {
-
-        images.innerHTML =
-            "❌ Pictures load nahi ho sakin.";
-
-    }
-
-    else if (
-        !imageFiles ||
-        imageFiles.length === 0
-    ) {
-
-        images.innerHTML =
-            "No pictures uploaded yet.";
-
-    }
-
-    else {
-
-        images.innerHTML = "";
-
-
-        imageFiles.forEach(
-            function(file) {
-
-                const {
-                    data
-                } =
-                    supabaseClient.storage
-                    .from("uploads")
-                    .getPublicUrl(
-                        "images/" +
-                        file.name
-                    );
-
-
-                const img =
-                    document
-                    .createElement("img");
-
-
-                img.src =
-                    data.publicUrl;
-
-
-                img.className =
-                    "gallery-img";
-
-
-                images.appendChild(img);
-
-            }
-        );
-
-    }
-
-
-    /*
-     * VIDEOS
-     */
-
-    const {
-        data: videoFiles,
-        error: videoError
-    } =
-        await supabaseClient.storage
-        .from("uploads")
-        .list("videos", {
-
-            limit: 100,
-
-            sortBy: {
-                column: "created_at",
-                order: "desc"
-            }
-
-        });
-
-
-    if (videoError) {
-
-        videos.innerHTML =
-            "❌ Videos load nahi ho sakin.";
-
-    }
-
-    else if (
-        !videoFiles ||
-        videoFiles.length === 0
-    ) {
-
-        videos.innerHTML =
-            "No videos uploaded yet.";
-
-    }
-
-    else {
-
-        videos.innerHTML = "";
-
-
-        videoFiles.forEach(
-            function(file) {
-
-                const {
-                    data
-                } =
-                    supabaseClient.storage
-                    .from("uploads")
-                    .getPublicUrl(
-                        "videos/" +
-                        file.name
-                    );
-
-
-                const video =
-                    document
-                    .createElement("video");
-
-
-                video.src =
-                    data.publicUrl;
-
-
-                video.className =
-                    "gallery-video";
-
-
-                video.controls =
-                    true;
-
-
-                video.playsInline =
-                    true;
-
-
-                videos.appendChild(video);
-
-
-                videos.appendChild(
-                    document
-                    .createElement("br")
-                );
-
-
-            }
-        );
-
-    }
+return;
 
 }
 
+if(data.length===0){
 
-loadGallery();
+container.innerHTML="<h3>No Products Found</h3>";
+
+return;
+
+}
+
+container.innerHTML="";
+    for(const product of data){
+
+const card=document.createElement("div");
+
+card.className="card";
+
+let images="";
+
+if(product.image_urls){
+
+for(const img of product.image_urls){
+
+images+=`
+<img
+src="${img}"
+style="width:100%;border-radius:10px;margin-top:10px;">
+`;
+
+}
+
+}
+
+let videos="";
+
+if(product.video_urls){
+
+for(const video of product.video_urls){
+
+videos+=`
+<video
+controls
+style="width:100%;margin-top:10px;border-radius:10px;">
+
+<source
+src="${video}"
+type="video/mp4">
+
+</video>
+`;
+
+}
+
+}
+
+card.innerHTML=`
+
+<h2>${product.name}</h2>
+
+<p><b>💰 Price:</b> ${product.price}</p>
+
+<p>${product.description}</p>
+
+${images}
+
+${videos}
+
+<p><b>👁️ Views:</b> ${product.views}</p>
+
+<hr>
+
+`;
+
+container.appendChild(card);
+
+    }
+    card.onclick = async function () {
+
+const { error } = await supabaseClient
+.from("products")
+.update({
+views: (product.views || 0) + 1
+})
+.eq("id", product.id);
+
+if (!error) {
+
+location.reload();
+
+}
+
+};
+
+const adminEmail = "kamrangamer866@gmail.com";
+
+const {
+data: sessionData
+} = await supabaseClient.auth.getSession();
+
+if (
+sessionData.session &&
+sessionData.session.user.email.toLowerCase() === adminEmail
+) {
+
+const delBtn = document.createElement("button");
+
+delBtn.className = "signup-btn";
+
+delBtn.innerText = "🗑️ Delete Product";
+
+delBtn.onclick = async function (e) {
+
+e.stopPropagation();
+
+if (!confirm("Delete this product?")) return;
+
+const { error } = await supabaseClient
+.from("products")
+.delete()
+.eq("id", product.id);
+
+if (!error) {
+
+card.remove();
+
+} else {
+
+alert(error.message);
+
+}
+
+};
+
+card.appendChild(delBtn);
+
+}
+    }
+
+loadProducts();
 
 </script>
 
 </body>
+
 </html>
