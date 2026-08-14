@@ -2,8 +2,11 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Dashboard</title>
 
@@ -21,35 +24,9 @@
 
 <p id="adminEmail"></p>
 
-<h3>📸 Upload Picture</h3>
+<hr>
 
-<input
-type="file"
-id="imageFile"
-class="input-box"
-accept="image/*">
-
-<br><br>
-
-<button
-onclick="uploadImage()"
-class="signup-btn">
-UPLOAD PICTURE
-</button>
-    <p id="message"></p>
-    <br><br>
-
-<button
-    onclick="saveProduct()"
-    class="signup-btn">
-
-💾 SAVE PRODUCT
-
-</button>
-    
-
-<br><br>
-    <h3>📦 Product Name</h3>
+<h3>📦 Product Name</h3>
 
 <input
 type="text"
@@ -79,29 +56,47 @@ placeholder="Enter Product Description"></textarea>
 
 <br><br>
 
-<h3>🎬 Upload Video</h3>
+<h3>📸 Product Photos</h3>
+
+<input
+type="file"
+id="imageFile"
+class="input-box"
+accept="image/*"
+multiple>
+
+<br><br>
+
+<h3>🎥 Product Videos</h3>
 
 <input
 type="file"
 id="videoFile"
 class="input-box"
-accept="video/*">
+accept="video/*"
+multiple>
 
 <br><br>
 
 <button
-onclick="uploadVideo()"
-class="signup-btn">
-UPLOAD VIDEO
+class="signup-btn"
+onclick="saveProduct()">
+
+💾 SAVE PRODUCT
+
 </button>
 
+<br><br>
 
-    
+<p id="message"></p>
 
 <br>
 
-<a href="Gallery.html" class="start-btn">
+<a href="Gallery.html"
+class="start-btn">
+
 VIEW GALLERY
+
 </a>
 
 <br><br>
@@ -109,65 +104,70 @@ VIEW GALLERY
 <button
 onclick="logout()"
 class="start-btn">
+
 LOGOUT
+
 </button>
 
 <footer>
+
 © 2026 MR BILLA DLR
+
 </footer>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
 
 <script>
 
-const CLOUD_NAME = "edquri0f";
-const UPLOAD_PRESET = "Mr billa 11";
+const CLOUD_NAME="edquri0f";
 
-const ADMIN_EMAIL = "kamrangamer866@gmail.com";
+const UPLOAD_PRESET="Mr billa 11";
+
+const ADMIN_EMAIL="kamrangamer866@gmail.com";
 
 async function checkAdmin(){
 
 const {data,error}=await supabaseClient.auth.getSession();
 
 if(error || !data.session){
+
 window.location.href="login.html";
+
 return;
+
 }
 
-const loggedInEmail=data.session.user.email.toLowerCase();
+const email=data.session.user.email.toLowerCase();
 
-if(loggedInEmail!==ADMIN_EMAIL){
+if(email!==ADMIN_EMAIL){
+
 await supabaseClient.auth.signOut();
+
 window.location.href="login.html";
+
 return;
+
 }
 
-document.getElementById("adminEmail").textContent="Logged in as: "+loggedInEmail;
+document.getElementById("adminEmail").innerText="Logged in as: "+email;
 
 }
 
 checkAdmin();
-    async function uploadImage(){
-
-const file=document.getElementById("imageFile").files[0];
-const message=document.getElementById("message");
-
-if(!file){
-message.textContent="❌ Please select a picture.";
-return;
-}
-
-message.textContent="Uploading picture...";
+    async function uploadToCloudinary(file,type){
 
 const formData=new FormData();
+
 formData.append("file",file);
+
 formData.append("upload_preset",UPLOAD_PRESET);
 
 const response=await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`,
 {
 method:"POST",
 body:formData
@@ -177,79 +177,100 @@ const result=await response.json();
 
 if(result.secure_url){
 
-message.innerHTML=
-"✅ Picture uploaded successfully!<br><br><a href='"+result.secure_url+"' target='_blank'>View Image</a>";
+return result.secure_url;
 
 }else{
 
-message.textContent=
-"❌ "+(result.error?.message || "Upload failed");
+throw new Error(result.error?.message || "Upload Failed");
 
 }
 
+}
+
+async function uploadFiles(files,type){
+
+const urls=[];
+
+for(const file of files){
+
+const url=await uploadToCloudinary(file,type);
+
+urls.push(url);
+
+}
+
+return urls;
+
+}
+    async function saveProduct(){
+
+const message=document.getElementById("message");
+
+const name=document.getElementById("productName").value.trim();
+
+const price=document.getElementById("productPrice").value.trim();
+
+const description=document.getElementById("productDescription").value.trim();
+
+const imageFiles=document.getElementById("imageFile").files;
+
+const videoFiles=document.getElementById("videoFile").files;
+
+if(name===""){
+
+message.textContent="❌ Enter Product Name";
+
+return;
+
+}
+
+message.textContent="Uploading files...";
+
+try{
+
+const imageUrls=await uploadFiles(imageFiles,"image");
+
+const videoUrls=await uploadFiles(videoFiles,"video");
+
+const {error}=await supabaseClient
+.from("products")
+.insert([{
+
+name:name,
+
+price:price,
+
+description:description,
+
+image_urls:imageUrls,
+
+video_urls:videoUrls,
+
+views:0
+
+}]);
+
+if(error){
+
+message.textContent="❌ "+error.message;
+
+return;
+
+}
+
+message.textContent="✅ Product Saved Successfully";
+
+document.getElementById("productName").value="";
+document.getElementById("productPrice").value="";
+document.getElementById("productDescription").value="";
 document.getElementById("imageFile").value="";
-
-    }
-    async function uploadVideo(){
-
-const file=document.getElementById("videoFile").files[0];
-const message=document.getElementById("message");
-
-if(!file){
-message.textContent="❌ Please select a video.";
-return;
-}
-
-message.textContent="Uploading video...";
-
-const formData=new FormData();
-formData.append("file",file);
-formData.append("upload_preset",UPLOAD_PRESET);
-
-const response=await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`,
-{
-method:"POST",
-body:formData
-});
-
-const result=await response.json();
-
-if(result.secure_url){
-
-message.innerHTML=
-"✅ Video uploaded successfully!<br><br><a href='"+result.secure_url+"' target='_blank'>Watch Video</a>";
-
-}else{
-
-message.textContent=
-"❌ "+(result.error?.message || "Upload failed");
-
-}
-
 document.getElementById("videoFile").value="";
 
-    } 
-    async function saveProduct() {
+}catch(err){
 
-    const name =
-        document.getElementById("productName").value;
+message.textContent="❌ "+err.message;
 
-    const price =
-        document.getElementById("productPrice").value;
-
-    const description =
-        document.getElementById("productDescription").value;
-
-    if (!name) {
-
-        alert("Enter Product Name");
-
-        return;
-
-    }
-
-    alert("✅ Product information saved.\n\nNext step mein images aur videos database mein save karenge.");
+}
 
     }
     async function logout(){
@@ -263,4 +284,5 @@ window.location.href="index.html";
 </script>
 
 </body>
+
 </html>
