@@ -70,6 +70,16 @@ container.innerHTML="";
     for(const product of data){
 
 const card=document.createElement("div");
+        card.onclick = () => {
+
+localStorage.setItem(
+"selectedProduct",
+JSON.stringify(product)
+);
+
+window.location.href = "product.html";
+
+};
 
 card.className="card";
 
