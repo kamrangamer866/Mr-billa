@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Product Details</title>
+
+<link rel="stylesheet" href="Style.css">
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1 id="productName"></h1>
+
+<div id="mediaContainer"></div>
+
+<br>
+
+<h2 id="productPrice"></h2>
+
+<p id="productDescription"></p>
+
+<p id="productViews"></p>
+
+<br>
+
+<button
+id="prevBtn"
+class="signup-btn">
+
+⬅ Previous
+
+</button>
+
+<button
+id="nextBtn"
+class="signup-btn">
+
+Next ➡
+
+</button>
+
+<br><br>
+
+<a
+href="Gallery.html"
+class="start-btn">
+
+⬅ Back To Gallery
+
+</a>
+
+</div>
+
+<script>
+
+const product =
+JSON.parse(
+localStorage.getItem("selectedProduct")
+);
+
+let currentIndex = 0;
+
+const media =
+product.media || [];
+
+document.getElementById("productName").innerText =
+product.name;
+
+document.getElementById("productPrice").innerText =
+"💰 " + product.price;
+
+document.getElementById("productDescription").innerText =
+product.description;
+
+document.getElementById("productViews").innerText =
+"👁 Views : " + product.views;
+  function showMedia(){
+
+const container =
+document.getElementById("mediaContainer");
+
+container.innerHTML = "";
+
+if(media.length===0){
+
+container.innerHTML =
+"<h3>No Media</h3>";
+
+return;
+
+}
+
+const item = media[currentIndex];
+
+if(item.type==="image"){
+
+container.innerHTML =
+
+`<img
+src="${item.url}"
+style="width:100%;border-radius:10px;">`;
+
+}else{
+
+container.innerHTML =
+
+`<video
+controls
+autoplay
+style="width:100%;border-radius:10px;">
+
+<source
+src="${item.url}"
+type="video/mp4">
+
+</video>`;
+
+}
+
+}
+
+showMedia();
+
+document.getElementById("nextBtn").onclick=function(){
+
+if(currentIndex < media.length-1){
+
+currentIndex++;
+
+showMedia();
+
+}
+
+}
+
+document.getElementById("prevBtn").onclick=function(){
+
+if(currentIndex>0){
+
+currentIndex--;
+
+showMedia();
+
+}
+
+}
+  </script>
+
+</body>
+
+</html>
