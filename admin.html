@@ -108,7 +108,59 @@ multiple>
 class="signup-btn"
 onclick="saveProduct()">
 
-💾 SAVE PRODUCT
+async function saveProduct(){
+
+const name=document.getElementById("productName").value.trim();
+
+const price=document.getElementById("productPrice").value.trim();
+
+const description=document.getElementById("productDescription").value.trim();
+
+const message=document.getElementById("message");
+
+if(name==""){
+
+message.textContent="❌ Enter Product Name";
+
+return;
+
+}
+
+const {error}=await supabaseClient
+.from("products")
+.insert([{
+
+name:name,
+
+price:price,
+
+description:description,
+
+media:uploadedMedia,
+
+views:0
+
+}]);
+
+if(error){
+
+message.textContent="❌ "+error.message;
+
+return;
+
+}
+
+message.textContent="✅ Product Saved Successfully";
+
+document.getElementById("productName").value="";
+document.getElementById("productPrice").value="";
+document.getElementById("productDescription").value="";
+document.getElementById("mediaFiles").value="";
+document.getElementById("mediaPreview").innerHTML="";
+
+uploadedMedia=[];
+
+}
 
 </button>
 
