@@ -156,6 +156,93 @@ const UPLOAD_PRESET="Mr billa 11";
 const ADMIN_EMAIL="kamrangamer866@gmail.com";
 
 async function checkAdmin(){
+    let uploadedMedia = [];
+
+async function uploadMedia() {
+
+const files = document.getElementById("mediaFiles").files;
+
+const preview = document.getElementById("mediaPreview");
+
+const message = document.getElementById("message");
+
+preview.innerHTML = "";
+
+uploadedMedia = [];
+
+if (files.length == 0) {
+
+message.textContent = "❌ Select at least one file";
+
+return;
+
+}
+
+if (files.length > 5) {
+
+message.textContent = "❌ Maximum 5 files allowed";
+
+return;
+
+}
+
+message.textContent = "Uploading...";
+
+for (const file of files) {
+
+const formData = new FormData();
+
+formData.append("file", file);
+
+formData.append("upload_preset", UPLOAD_PRESET);
+
+const type = file.type.startsWith("video")
+? "video"
+: "image";
+
+const response = await fetch(
+
+`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`,
+
+{
+
+method: "POST",
+
+body: formData
+
+}
+
+);
+
+const result = await response.json();
+
+if (result.secure_url) {
+
+uploadedMedia.push({
+
+type: type,
+
+url: result.secure_url
+
+});
+
+if (type == "image") {
+
+preview.innerHTML += `<img src="${result.secure_url}" width="120">`;
+
+} else {
+
+preview.innerHTML += `<video src="${result.secure_url}" width="120" controls></video>`;
+
+}
+
+}
+
+}
+
+message.textContent = "✅ Media Uploaded";
+
+}
 
 const {data,error}=await supabaseClient.auth.getSession();
 
