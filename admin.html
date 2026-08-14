@@ -36,6 +36,46 @@ onclick="uploadImage()"
 class="signup-btn">
 UPLOAD PICTURE
 </button>
+    <p id="message"></p>
+    <br><br>
+
+<button
+    onclick="saveProduct()"
+    class="signup-btn">
+
+💾 SAVE PRODUCT
+
+</button>
+    
+
+<br><br>
+    <h3>📦 Product Name</h3>
+
+<input
+type="text"
+id="productName"
+class="input-box"
+placeholder="Enter Product Name">
+
+<br><br>
+
+<h3>💰 Product Price</h3>
+
+<input
+type="text"
+id="productPrice"
+class="input-box"
+placeholder="Enter Product Price">
+
+<br><br>
+
+<h3>📝 Product Description</h3>
+
+<textarea
+id="productDescription"
+class="input-box"
+rows="4"
+placeholder="Enter Product Description"></textarea>
 
 <br><br>
 
@@ -55,7 +95,8 @@ class="signup-btn">
 UPLOAD VIDEO
 </button>
 
-<p id="message"></p>
+
+    
 
 <br>
 
@@ -189,6 +230,28 @@ message.textContent=
 document.getElementById("videoFile").value="";
 
     } 
+    async function saveProduct() {
+
+    const name =
+        document.getElementById("productName").value;
+
+    const price =
+        document.getElementById("productPrice").value;
+
+    const description =
+        document.getElementById("productDescription").value;
+
+    if (!name) {
+
+        alert("Enter Product Name");
+
+        return;
+
+    }
+
+    alert("✅ Product information saved.\n\nNext step mein images aur videos database mein save karenge.");
+
+    }
     async function logout(){
 
 await supabaseClient.auth.signOut();
