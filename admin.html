@@ -5,8 +5,7 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Admin Dashboard</title>
 
@@ -22,76 +21,9 @@ content="width=device-width, initial-scale=1.0">
 
 <h2>🔐 ADMIN DASHBOARD</h2>
 
-<p id="adminEmail"></p>
+<h3>📦 PRODUCT DETAILS</h3>
 
-<hr>
-    <h3>📁 Upload Media 1</h3>
-
-<input
-type="file"
-id="media1"
-class="input-box"
-accept="image/*,video/*">
-
-<br><br>
-
-<h3>📁 Upload Media 2</h3>
-
-<input
-type="file"
-id="media2"
-class="input-box"
-accept="image/*,video/*">
-
-<br><br>
-
-<h3>📁 Upload Media 3</h3>
-
-<input
-type="file"
-id="media3"
-class="input-box"
-accept="image/*,video/*">
-
-<br><br>
-
-<h3>📁 Upload Media 4</h3>
-
-<input
-type="file"
-id="media4"
-class="input-box"
-accept="image/*,video/*">
-
-<br><br>
-
-<h3>📁 Upload Media 5</h3>
-
-<input
-type="file"
-id="media5"
-class="input-box"
-accept="image/*,video/*">
-
-<br><br>
-
-<button
-onclick="uploadMedia()"
-class="signup-btn">
-
-📤 Upload Media
-
-</button>
-
-<br><br>
-
-<div id="mediaPreview"></div>
-
-<p id="message"></p>
-
-<hr>
-
-<h3>📦 Product Name</h3>
+<label>Product Name</label>
 
 <input
 type="text"
@@ -101,7 +33,7 @@ placeholder="Enter Product Name">
 
 <br><br>
 
-<h3>💰 Product Price</h3>
+<label>Product Price</label>
 
 <input
 type="text"
@@ -111,7 +43,7 @@ placeholder="Enter Product Price">
 
 <br><br>
 
-<h3>📝 Product Description</h3>
+<label>Product Description</label>
 
 <textarea
 id="productDescription"
@@ -121,98 +53,72 @@ placeholder="Enter Product Description"></textarea>
 
 <br><br>
 
-<h3>📸 Product Photos</h3>
+<label>📁 Upload Media 1</label>
 
 <input
 type="file"
-id="imageFile"
+id="media1"
 class="input-box"
-accept="image/*"
-multiple>
+accept="image/*,video/*">
 
 <br><br>
 
-<h3>🎥 Product Videos</h3>
+<label>📁 Upload Media 2</label>
 
 <input
 type="file"
-id="videoFile"
+id="media2"
 class="input-box"
-accept="video/*"
-multiple>
+accept="image/*,video/*">
 
 <br><br>
 
+<label>📁 Upload Media 3</label>
+
+<input
+type="file"
+id="media3"
+class="input-box"
+accept="image/*,video/*">
+
+<br><br>
+
+<label>📁 Upload Media 4</label>
+
+<input
+type="file"
+id="media4"
+class="input-box"
+accept="image/*,video/*">
+
+<br><br>
+
+<label>📁 Upload Media 5</label>
+
+<input
+type="file"
+id="media5"
+class="input-box"
+accept="image/*,video/*">
+
+<br><br>
+
+<p id="message"></p>
 <button
 class="signup-btn"
 onclick="saveProduct()">
 
-async function saveProduct(){
-
-const name=document.getElementById("productName").value.trim();
-
-const price=document.getElementById("productPrice").value.trim();
-
-const description=document.getElementById("productDescription").value.trim();
-
-const message=document.getElementById("message");
-
-if(name==""){
-
-message.textContent="❌ Enter Product Name";
-
-return;
-
-}
-
-const {error}=await supabaseClient
-.from("products")
-.insert([{
-
-name:name,
-
-price:price,
-
-description:description,
-
-media:uploadedMedia,
-
-views:0
-
-}]);
-
-if(error){
-
-message.textContent="❌ "+error.message;
-
-return;
-
-}
-
-message.textContent="✅ Product Saved Successfully";
-
-document.getElementById("productName").value="";
-document.getElementById("productPrice").value="";
-document.getElementById("productDescription").value="";
-document.getElementById("mediaFiles").value="";
-document.getElementById("mediaPreview").innerHTML="";
-
-uploadedMedia=[];
-
-}
+💾 SAVE PRODUCT
 
 </button>
 
 <br><br>
 
-<p id="message"></p>
-
-<br>
-
-<a href="Gallery.html"
+<a
+href="Gallery.html"
 class="start-btn">
 
-VIEW GALLERY
+📦 VIEW GALLERY
 
 </a>
 
@@ -222,9 +128,11 @@ VIEW GALLERY
 onclick="logout()"
 class="start-btn">
 
-LOGOUT
+🚪 LOGOUT
 
 </button>
+
+<br><br>
 
 <footer>
 
@@ -246,15 +154,36 @@ const UPLOAD_PRESET="Mr billa 11";
 
 const ADMIN_EMAIL="kamrangamer866@gmail.com";
 
+let uploadedMedia=[];
+
 async function checkAdmin(){
 
-let uploadedMedia = [];
+const {data,error}=await supabaseClient.auth.getSession();
 
-async function uploadMedia(){
+if(error || !data.session){
+
+window.location.href="login.html";
+
+return;
+
+}
+
+if(data.session.user.email.toLowerCase()!=ADMIN_EMAIL){
+
+await supabaseClient.auth.signOut();
+
+window.location.href="login.html";
+
+return;
+
+}
+
+}
+
+checkAdmin();
+    async function uploadAllMedia(){
 
 uploadedMedia=[];
-
-const message=document.getElementById("message");
 
 for(let i=1;i<=5;i++){
 
@@ -301,163 +230,9 @@ url:result.secure_url
 
 }
 
-message.textContent="✅ Media Uploaded Successfully";
 }
 
-const message = document.getElementById("message");
-
-preview.innerHTML = "";
-
-uploadedMedia = [];
-
-if (files.length == 0) {
-
-message.textContent = "❌ Select at least one file";
-
-return;
-
-}
-
-if (files.length > 5) {
-
-message.textContent = "❌ Maximum 5 files allowed";
-
-return;
-
-}
-
-message.textContent = "Uploading...";
-
-for (const file of files) {
-
-const formData = new FormData();
-
-formData.append("file", file);
-
-formData.append("upload_preset", UPLOAD_PRESET);
-
-const type = file.type.startsWith("video")
-? "video"
-: "image";
-
-const response = await fetch(
-
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`,
-
-{
-
-method: "POST",
-
-body: formData
-
-}
-
-);
-
-const result = await response.json();
-
-if (result.secure_url) {
-
-uploadedMedia.push({
-
-type: type,
-
-url: result.secure_url
-
-});
-
-if (type == "image") {
-
-preview.innerHTML += `<img src="${result.secure_url}" width="120">`;
-
-} else {
-
-preview.innerHTML += `<video src="${result.secure_url}" width="120" controls></video>`;
-
-}
-
-}
-
-}
-
-message.textContent = "✅ Media Uploaded";
-
-}
-
-const {data,error}=await supabaseClient.auth.getSession();
-
-if(error || !data.session){
-
-window.location.href="login.html";
-
-return;
-
-}
-
-const email=data.session.user.email.toLowerCase();
-
-if(email!==ADMIN_EMAIL){
-
-await supabaseClient.auth.signOut();
-
-window.location.href="login.html";
-
-return;
-
-}
-
-document.getElementById("adminEmail").innerText="Logged in as: "+email;
-
-}
-
-checkAdmin();
-    async function uploadToCloudinary(file,type){
-
-const formData=new FormData();
-
-formData.append("file",file);
-
-formData.append("upload_preset",UPLOAD_PRESET);
-
-const response=await fetch(
-`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${type}/upload`,
-{
-method:"POST",
-body:formData
-});
-
-const result=await response.json();
-
-if(result.secure_url){
-
-return result.secure_url;
-
-}else{
-
-throw new Error(result.error?.message || "Upload Failed");
-
-}
-
-}
-
-async function uploadFiles(files,type){
-
-const urls=[];
-
-for(const file of files){
-
-const url=await uploadToCloudinary(file,type);
-
-urls.push(url);
-
-}
-
-return urls;
-
-}
-    async function saveProduct(){
-
-const message=document.getElementById("message");
+async function saveProduct(){
 
 const name=document.getElementById("productName").value.trim();
 
@@ -465,9 +240,7 @@ const price=document.getElementById("productPrice").value.trim();
 
 const description=document.getElementById("productDescription").value.trim();
 
-const imageFiles=document.getElementById("imageFile").files;
-
-const videoFiles=document.getElementById("videoFile").files;
+const message=document.getElementById("message");
 
 if(name===""){
 
@@ -477,13 +250,9 @@ return;
 
 }
 
-message.textContent="Uploading files...";
+message.textContent="Uploading...";
 
-try{
-
-const imageUrls=await uploadFiles(imageFiles,"image");
-
-const videoUrls=await uploadFiles(videoFiles,"video");
+await uploadAllMedia();
 
 const {error}=await supabaseClient
 .from("products")
@@ -495,9 +264,7 @@ price:price,
 
 description:description,
 
-image_urls:imageUrls,
-
-video_urls:videoUrls,
+media:uploadedMedia,
 
 views:0
 
@@ -512,18 +279,6 @@ return;
 }
 
 message.textContent="✅ Product Saved Successfully";
-
-document.getElementById("productName").value="";
-document.getElementById("productPrice").value="";
-document.getElementById("productDescription").value="";
-document.getElementById("imageFile").value="";
-document.getElementById("videoFile").value="";
-
-}catch(err){
-
-message.textContent="❌ "+err.message;
-
-}
 
     }
     async function logout(){
