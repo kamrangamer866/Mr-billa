@@ -95,6 +95,29 @@ product.description;
 document.getElementById("productViews").innerText =
 "👁 Views : " + product.views;
   function showMedia(){
+  async function updateViews(){
+
+const newViews = (product.views || 0) + 1;
+
+const { error } = await supabaseClient
+.from("products")
+.update({
+views: newViews
+})
+.eq("id", product.id);
+
+if(!error){
+
+document.getElementById("productViews").innerText =
+"👁 Views : " + newViews;
+
+product.views = newViews;
+
+}
+
+}
+
+updateViews();
 
 const container =
 document.getElementById("mediaContainer");
