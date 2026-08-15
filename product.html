@@ -140,6 +140,52 @@ type="video/mp4">
 }
 
 showMedia();
+  async function enableDeleteButton(){
+
+const { data } =
+await supabaseClient.auth.getSession();
+
+if(
+data.session &&
+data.session.user.email.toLowerCase() ===
+"kamrangamer866@gmail.com"
+){
+
+const btn =
+document.getElementById("deleteBtn");
+
+btn.style.display = "block";
+
+btn.onclick = async function(){
+
+if(!confirm("Delete this product?")) return;
+
+const { error } =
+await supabaseClient
+.from("products")
+.delete()
+.eq("id", product.id);
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+alert("✅ Product Deleted");
+
+window.location.href =
+"Gallery.html";
+
+};
+
+}
+
+}
+
+enableDeleteButton();
 
 document.getElementById("nextBtn").onclick=function(){
 
