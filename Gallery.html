@@ -5,7 +5,8 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>MR BILLA DLR - Gallery</title>
 
@@ -21,11 +22,17 @@
 
 <h2>📦 Products Gallery</h2>
 
-<div id="products"></div>
+<div id="products">
+
+Loading Products...
+
+</div>
 
 <br>
 
-<a href="index.html" class="start-btn">
+<a
+href="index.html"
+class="start-btn">
 
 🏠 HOME
 
@@ -33,176 +40,320 @@
 
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
+
 <script>
+
+const adminEmail = "kamrangamer866@gmail.com";
+
 
 async function loadProducts(){
 
-const container=document.getElementById("products");
+const container =
+document.getElementById("products");
 
-container.innerHTML="Loading Products...";
+container.innerHTML =
+"<p>Loading Products...</p>";
 
-const {data,error}=await supabaseClient
+
+const { data, error } =
+await supabaseClient
 .from("products")
 .select("*")
-.order("id",{ascending:false});
+.order("id", { ascending:false });
+
 
 if(error){
 
-container.innerHTML="<h3>❌ Failed to load products</h3>";
+console.error(error);
+
+container.innerHTML =
+"<h3>❌ Failed to load products</h3>";
 
 return;
 
 }
 
-if(data.length===0){
 
-container.innerHTML="<h3>No Products Found</h3>";
+if(!data || data.length === 0){
+
+container.innerHTML =
+"<h3>No Products Found</h3>";
 
 return;
 
 }
 
-container.innerHTML="";
-    for(const product of data){
 
-const card=document.createElement("div");
-        card.onclick = () => {
+container.innerHTML = "";
+
+
+const { data: sessionData } =
+await supabaseClient.auth.getSession();
+
+
+const isAdmin =
+sessionData.session &&
+sessionData.session.user.email.toLowerCase()
+=== adminEmail.toLowerCase();
+
+
+for(const product of data){
+
+const card =
+document.createElement("div");
+
+card.className = "card";
+
+card.style.cursor = "pointer";
+
+
+/* PRODUCT MEDIA */
+
+let mediaHTML = "";
+
+const media =
+Array.isArray(product.media)
+? product.media
+: [];
+
+
+if(media.length > 0){
+
+const firstMedia = media[0];
+
+
+if(firstMedia.type === "image"){
+
+mediaHTML = `
+
+<img
+
+src="${firstMedia.url}"
+
+style="
+width:100%;
+max-height:300px;
+object-fit:contain;
+border-radius:10px;
+margin-top:15px;
+">
+
+`;
+
+}else if(firstMedia.type === "video"){
+
+mediaHTML = `
+
+<video
+
+controls
+
+style="
+width:100%;
+max-height:300px;
+border-radius:10px;
+margin-top:15px;
+">
+
+<source
+src="${firstMedia.url}"
+type="video/mp4">
+
+</video>
+
+`;
+
+}
+
+}else{
+
+mediaHTML = `
+
+<p>📷 No Media Available</p>
+
+`;
+
+}
+
+
+/* PRODUCT CARD */
+
+card.innerHTML = `
+
+<h2>${product.name || ""}</h2>
+
+<p>
+
+<b>💰 Price:</b>
+
+${product.price || ""}
+
+</p>
+
+<p>
+
+${product.description || ""}
+
+</p>
+
+${mediaHTML}
+
+<p>
+
+<b>👁️ Views:</b>
+
+${product.views || 0}
+
+</p>
+
+<hr>
+
+`;
+
+
+/* OPEN PRODUCT DETAILS */
+
+card.addEventListener("click", async function(e){
+
+/*
+Video ke controls par click karne se
+product page open nahi hoga.
+*/
+
+if(e.target.tagName === "VIDEO" ||
+e.target.tagName === "SOURCE"){
+
+return;
+
+}
+
+
+/* INCREASE VIEW */
+
+const newViews =
+(product.views || 0) + 1;
+
+
+await supabaseClient
+.from("products")
+.update({
+views:newViews
+})
+.eq("id",product.id);
+
+
+/* UPDATED PRODUCT */
+
+product.views = newViews;
+
+
+/* SAVE PRODUCT */
 
 localStorage.setItem(
 "selectedProduct",
 JSON.stringify(product)
 );
 
-window.location.href = "product.html";
 
-};
+/* OPEN DETAILS */
 
-card.className="card";
+window.location.href =
+"product.html";
 
-let images="";
+});
 
-if(product.image_urls){
 
-for(const img of product.image_urls){
+/* ADMIN DELETE BUTTON */
 
-images+=`
-<img
-src="${img}"
-style="width:100%;border-radius:10px;margin-top:10px;">
-`;
+if(isAdmin){
 
-}
+const deleteBtn =
+document.createElement("button");
 
-}
+deleteBtn.className =
+"signup-btn";
 
-let videos="";
+deleteBtn.style.background =
+"red";
 
-if(product.video_urls){
+deleteBtn.innerText =
+"🗑️ DELETE PRODUCT";
 
-for(const video of product.video_urls){
 
-videos+=`
-<video
-controls
-style="width:100%;margin-top:10px;border-radius:10px;">
-
-<source
-src="${video}"
-type="video/mp4">
-
-</video>
-`;
-
-}
-
-}
-
-card.innerHTML=`
-
-<h2>${product.name}</h2>
-
-<p><b>💰 Price:</b> ${product.price}</p>
-
-<p>${product.description}</p>
-
-${images}
-
-${videos}
-
-<p><b>👁️ Views:</b> ${product.views}</p>
-
-<hr>
-
-`;
-
-container.appendChild(card);
-
-    }
-    card.onclick = async function () {
-
-const { error } = await supabaseClient
-.from("products")
-.update({
-views: (product.views || 0) + 1
-})
-.eq("id", product.id);
-
-if (!error) {
-
-location.reload();
-
-}
-
-};
-
-const adminEmail = "kamrangamer866@gmail.com";
-
-const {
-data: sessionData
-} = await supabaseClient.auth.getSession();
-
-if (
-sessionData.session &&
-sessionData.session.user.email.toLowerCase() === adminEmail
-) {
-
-const delBtn = document.createElement("button");
-
-delBtn.className = "signup-btn";
-
-delBtn.innerText = "🗑️ Delete Product";
-
-delBtn.onclick = async function (e) {
+deleteBtn.addEventListener(
+"click",
+async function(e){
 
 e.stopPropagation();
 
-if (!confirm("Delete this product?")) return;
 
-const { error } = await supabaseClient
+const confirmDelete =
+confirm(
+"Delete this product?"
+);
+
+
+if(!confirmDelete){
+
+return;
+
+}
+
+
+deleteBtn.disabled = true;
+
+deleteBtn.innerText =
+"Deleting...";
+
+
+const { error } =
+await supabaseClient
 .from("products")
 .delete()
-.eq("id", product.id);
+.eq("id",product.id);
 
-if (!error) {
+
+if(error){
+
+alert(
+"❌ Delete failed: "
++ error.message
+);
+
+deleteBtn.disabled = false;
+
+deleteBtn.innerText =
+"🗑️ DELETE PRODUCT";
+
+return;
+
+}
+
+
+/* REMOVE CARD */
 
 card.remove();
 
-} else {
+});
 
-alert(error.message);
+card.appendChild(deleteBtn);
+
+}
+
+
+container.appendChild(card);
 
 }
 
-};
-
-card.appendChild(delBtn);
-
 }
-    }
+
+
+/* START */
 
 loadProducts();
 
