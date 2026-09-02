@@ -14,7 +14,9 @@ content="width=device-width, initial-scale=1.0">
 
 </head>
 
+
 <body>
+
 
 <div class="card">
 
@@ -22,13 +24,16 @@ content="width=device-width, initial-scale=1.0">
 
 <h2>📦 Products Gallery</h2>
 
+
 <div id="products">
 
 Loading Products...
 
 </div>
 
+
 <br>
+
 
 <a
 href="index.html"
@@ -38,7 +43,9 @@ class="start-btn">
 
 </a>
 
+
 </div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -46,25 +53,33 @@ class="start-btn">
 <script src="supabase.js"></script>
 
 
-<script>
 
-const adminEmail = "kamrangamer866@gmail.com";
+<script>
 
 
 async function loadProducts(){
 
+
 const container =
 document.getElementById("products");
+
 
 container.innerHTML =
 "<p>Loading Products...</p>";
 
 
+
 const { data, error } =
 await supabaseClient
+
 .from("products")
+
 .select("*")
-.order("id", { ascending:false });
+
+.order("id", {
+ascending:false
+});
+
 
 
 if(error){
@@ -79,42 +94,42 @@ return;
 }
 
 
+
 if(!data || data.length === 0){
 
 container.innerHTML =
-"<h3>No Products Found</h3>";
+"<h3>📦 No Products Found</h3>";
 
 return;
 
 }
 
 
+
 container.innerHTML = "";
 
-
-const { data: sessionData } =
-await supabaseClient.auth.getSession();
-
-
-const isAdmin =
-sessionData.session &&
-sessionData.session.user.email.toLowerCase()
-=== adminEmail.toLowerCase();
 
 
 for(const product of data){
 
+
 const card =
 document.createElement("div");
 
-card.className = "card";
 
-card.style.cursor = "pointer";
+card.className =
+"card";
 
 
-/* PRODUCT MEDIA */
+card.style.cursor =
+"pointer";
 
-let mediaHTML = "";
+
+
+/* =========================
+   GET MEDIA
+========================= */
+
 
 const media =
 Array.isArray(product.media)
@@ -122,12 +137,26 @@ Array.isArray(product.media)
 : [];
 
 
+
+let mediaHTML = "";
+
+
+
+/* =========================
+   ONLY FIRST MEDIA SHOW
+========================= */
+
+
 if(media.length > 0){
 
-const firstMedia = media[0];
+
+const firstMedia =
+media[0];
+
 
 
 if(firstMedia.type === "image"){
+
 
 mediaHTML = `
 
@@ -135,17 +164,31 @@ mediaHTML = `
 
 src="${firstMedia.url}"
 
+alt="Product Image"
+
 style="
+
 width:100%;
+
 max-height:300px;
+
 object-fit:contain;
+
 border-radius:10px;
+
 margin-top:15px;
+
 ">
 
 `;
 
-}else if(firstMedia.type === "video"){
+
+
+}
+
+
+else if(firstMedia.type === "video"){
+
 
 mediaHTML = `
 
@@ -154,14 +197,21 @@ mediaHTML = `
 controls
 
 style="
+
 width:100%;
+
 max-height:300px;
+
 border-radius:10px;
+
 margin-top:15px;
+
 ">
 
 <source
+
 src="${firstMedia.url}"
+
 type="video/mp4">
 
 </video>
@@ -170,7 +220,12 @@ type="video/mp4">
 
 }
 
-}else{
+
+}
+
+
+else{
+
 
 mediaHTML = `
 
@@ -181,11 +236,20 @@ mediaHTML = `
 }
 
 
-/* PRODUCT CARD */
+
+/* =========================
+   PRODUCT CARD
+========================= */
+
 
 card.innerHTML = `
 
-<h2>${product.name || ""}</h2>
+<h2>
+
+📦 ${product.name || "Product"}
+
+</h2>
+
 
 <p>
 
@@ -195,13 +259,16 @@ ${product.price || ""}
 
 </p>
 
+
 <p>
 
 ${product.description || ""}
 
 </p>
 
+
 ${mediaHTML}
+
 
 <p>
 
@@ -211,153 +278,130 @@ ${product.views || 0}
 
 </p>
 
+
+<p style="color:#00e676;">
+
+👉 Click to view all photos/videos
+
+</p>
+
+
 <hr>
 
 `;
 
 
-/* OPEN PRODUCT DETAILS */
 
-card.addEventListener("click", async function(e){
+/* =========================
+   OPEN PRODUCT PAGE
+========================= */
+
+
+card.addEventListener(
+"click",
+async function(e){
+
+
 
 /*
-Video ke controls par click karne se
-product page open nahi hoga.
+
+Video controls par click
+karne se product page open
+nahi hoga.
+
 */
 
-if(e.target.tagName === "VIDEO" ||
-e.target.tagName === "SOURCE"){
+
+if(
+
+e.target.tagName === "VIDEO" ||
+
+e.target.tagName === "SOURCE"
+
+){
 
 return;
 
 }
 
 
-/* INCREASE VIEW */
+
+/* =========================
+   INCREASE VIEW
+========================= */
+
 
 const newViews =
 (product.views || 0) + 1;
 
 
+
 await supabaseClient
+
 .from("products")
+
 .update({
+
 views:newViews
+
 })
+
 .eq("id",product.id);
 
 
-/* UPDATED PRODUCT */
 
-product.views = newViews;
+product.views =
+newViews;
 
 
-/* SAVE PRODUCT */
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
 
 localStorage.setItem(
+
 "selectedProduct",
+
 JSON.stringify(product)
+
 );
 
 
-/* OPEN DETAILS */
+
+/* =========================
+   OPEN PRODUCT
+========================= */
+
 
 window.location.href =
 "product.html";
 
-});
-
-
-/* ADMIN DELETE BUTTON */
-
-if(isAdmin){
-
-const deleteBtn =
-document.createElement("button");
-
-deleteBtn.className =
-"signup-btn";
-
-deleteBtn.style.background =
-"red";
-
-deleteBtn.innerText =
-"🗑️ DELETE PRODUCT";
-
-
-deleteBtn.addEventListener(
-"click",
-async function(e){
-
-e.stopPropagation();
-
-
-const confirmDelete =
-confirm(
-"Delete this product?"
-);
-
-
-if(!confirmDelete){
-
-return;
-
-}
-
-
-deleteBtn.disabled = true;
-
-deleteBtn.innerText =
-"Deleting...";
-
-
-const { error } =
-await supabaseClient
-.from("products")
-.delete()
-.eq("id",product.id);
-
-
-if(error){
-
-alert(
-"❌ Delete failed: "
-+ error.message
-);
-
-deleteBtn.disabled = false;
-
-deleteBtn.innerText =
-"🗑️ DELETE PRODUCT";
-
-return;
-
-}
-
-
-/* REMOVE CARD */
-
-card.remove();
 
 });
 
-card.appendChild(deleteBtn);
-
-}
 
 
 container.appendChild(card);
 
-}
 
 }
 
+}
 
-/* START */
+
+
+/* =========================
+   START
+========================= */
+
 
 loadProducts();
 
+
 </script>
+
 
 </body>
 
