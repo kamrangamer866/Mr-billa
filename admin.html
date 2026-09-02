@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,17 +13,74 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 
+<style>
+
+.admin-product{
+    margin-top:30px;
+    padding:20px;
+    border:2px solid #00e676;
+    border-radius:15px;
+    background:#111;
+}
+
+.admin-product h2{
+    color:#00e676;
+}
+
+.media-box{
+    margin-top:20px;
+    padding:15px;
+    border:1px solid #444;
+    border-radius:12px;
+    background:#181818;
+}
+
+.media-box img,
+.media-box video{
+    width:100%;
+    max-height:350px;
+    object-fit:contain;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+.media-detail{
+    margin-top:10px;
+    padding:12px;
+    background:#222;
+    border-radius:10px;
+    color:white;
+}
+
+.delete-product{
+    background:red !important;
+    color:white !important;
+    border:none;
+    margin-top:20px;
+}
+
+#adminProducts{
+    margin-top:30px;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
+
 <div class="card">
+
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
 <h2>🔐 ADMIN DASHBOARD</h2>
 
-<h3>📦 PRODUCT DETAILS</h3>
+
+<h3>📦 ADD NEW PRODUCT</h3>
+
 
 <input
 type="text"
@@ -31,6 +90,7 @@ placeholder="Product Name">
 
 <br><br>
 
+
 <input
 type="text"
 id="productPrice"
@@ -39,15 +99,20 @@ placeholder="Product Price">
 
 <br><br>
 
+
 <textarea
 id="productDescription"
 class="input-box"
 rows="4"
 placeholder="Product Description"></textarea>
 
+
 <br><br>
 
-<h3>📁 Upload Media 1</h3>
+
+<!-- MEDIA 1 -->
+
+<h3>📁 Media 1</h3>
 
 <input
 type="file"
@@ -56,7 +121,19 @@ accept="image/*,video/*">
 
 <br><br>
 
-<h3>📁 Upload Media 2</h3>
+<textarea
+id="detail1"
+class="input-box"
+rows="3"
+placeholder="Media 1 ki detail / message"></textarea>
+
+
+<br><br>
+
+
+<!-- MEDIA 2 -->
+
+<h3>📁 Media 2</h3>
 
 <input
 type="file"
@@ -65,7 +142,19 @@ accept="image/*,video/*">
 
 <br><br>
 
-<h3>📁 Upload Media 3</h3>
+<textarea
+id="detail2"
+class="input-box"
+rows="3"
+placeholder="Media 2 ki detail / message"></textarea>
+
+
+<br><br>
+
+
+<!-- MEDIA 3 -->
+
+<h3>📁 Media 3</h3>
 
 <input
 type="file"
@@ -74,7 +163,19 @@ accept="image/*,video/*">
 
 <br><br>
 
-<h3>📁 Upload Media 4</h3>
+<textarea
+id="detail3"
+class="input-box"
+rows="3"
+placeholder="Media 3 ki detail / message"></textarea>
+
+
+<br><br>
+
+
+<!-- MEDIA 4 -->
+
+<h3>📁 Media 4</h3>
 
 <input
 type="file"
@@ -83,7 +184,19 @@ accept="image/*,video/*">
 
 <br><br>
 
-<h3>📁 Upload Media 5</h3>
+<textarea
+id="detail4"
+class="input-box"
+rows="3"
+placeholder="Media 4 ki detail / message"></textarea>
+
+
+<br><br>
+
+
+<!-- MEDIA 5 -->
+
+<h3>📁 Media 5</h3>
 
 <input
 type="file"
@@ -92,7 +205,19 @@ accept="image/*,video/*">
 
 <br><br>
 
+<textarea
+id="detail5"
+class="input-box"
+rows="3"
+placeholder="Media 5 ki detail / message"></textarea>
+
+
+<br><br>
+
+
 <p id="message"></p>
+
+
 <button
 class="signup-btn"
 onclick="saveProduct()">
@@ -101,17 +226,21 @@ onclick="saveProduct()">
 
 </button>
 
+
 <br><br>
+
 
 <a
 href="Gallery.html"
 class="start-btn">
 
-📦 VIEW GALLERY
+📦 VIEW PUBLIC GALLERY
 
 </a>
 
+
 <br><br>
+
 
 <button
 class="start-btn"
@@ -121,7 +250,20 @@ onclick="logout()">
 
 </button>
 
-<br><br>
+
+<hr>
+
+<h2>📦 SAVED PRODUCTS</h2>
+
+<div id="adminProducts">
+
+<p>Loading Products...</p>
+
+</div>
+
+
+<br>
+
 
 <footer>
 
@@ -129,23 +271,67 @@ onclick="logout()">
 
 </footer>
 
+
 </div>
+
+
 
 <script>
 
+
 const CLOUD_NAME = "edquri0f";
+
 const UPLOAD_PRESET = "Mr billa 11";
+
 const ADMIN_EMAIL = "kamrangamer866@gmail.com";
+
 
 let uploadedMedia = [];
 
+
+
+/* =========================
+   CHECK ADMIN LOGIN
+========================= */
+
+
 async function checkAdmin(){
 
-const { data } = await supabaseClient.auth.getSession();
+const { data, error } =
+await supabaseClient.auth.getSession();
+
+
+if(error){
+
+console.error(error);
+
+window.location.href="login.html";
+
+return;
+
+}
+
 
 if(!data.session){
 
-window.location.href = "login.html";
+window.location.href="login.html";
+
+return;
+
+}
+
+
+const email =
+data.session.user.email.toLowerCase();
+
+
+if(email !== ADMIN_EMAIL.toLowerCase()){
+
+alert("❌ Admin Access Only");
+
+await supabaseClient.auth.signOut();
+
+window.location.href="index.html";
 
 return;
 
@@ -153,18 +339,39 @@ return;
 
 }
 
+
 checkAdmin();
-    async function uploadAllMedia(){
+
+
+
+/* =========================
+   UPLOAD ALL MEDIA
+========================= */
+
+
+async function uploadAllMedia(){
 
 uploadedMedia=[];
 
-const message=document.getElementById("message");
 
-message.textContent="⏳ Uploading media...";
+const message =
+document.getElementById("message");
+
+
+message.textContent =
+"⏳ Uploading media...";
+
 
 for(let i=1;i<=5;i++){
 
-const input=document.getElementById("media"+i);
+
+const input =
+document.getElementById("media"+i);
+
+
+const detail =
+document.getElementById("detail"+i);
+
 
 if(!input || input.files.length===0){
 
@@ -172,70 +379,154 @@ continue;
 
 }
 
-const file=input.files[0];
 
-const formData=new FormData();
+const file =
+input.files[0];
+
+
+const mediaDetail =
+detail.value.trim();
+
+
+const formData =
+new FormData();
+
 
 formData.append("file",file);
 
-formData.append("upload_preset",UPLOAD_PRESET);
+formData.append(
+"upload_preset",
+UPLOAD_PRESET
+);
 
-const folder=file.type.startsWith("video")
+
+const folder =
+file.type.startsWith("video")
 ? "video"
 : "image";
 
-const response=await fetch(
+
+const response =
+await fetch(
+
 `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${folder}/upload`,
+
 {
 method:"POST",
 body:formData
-});
+}
 
-const result=await response.json();
+);
+
+
+const result =
+await response.json();
+
 
 if(result.secure_url){
+
 
 uploadedMedia.push({
 
 type:folder,
 
-url:result.secure_url
+url:result.secure_url,
+
+detail:mediaDetail
 
 });
 
+
 }else{
 
-throw new Error(result.error?.message || "Upload Failed");
+
+throw new Error(
+
+result.error?.message ||
+"Media Upload Failed"
+
+);
 
 }
 
 }
 
-message.textContent="✅ Media Uploaded";
 
-    }
-    async function saveProduct(){
+message.textContent =
+"✅ Media Uploaded Successfully";
 
-const name=document.getElementById("productName").value.trim();
-const price=document.getElementById("productPrice").value.trim();
-const description=document.getElementById("productDescription").value.trim();
+}
 
-const message=document.getElementById("message");
+
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
+
+async function saveProduct(){
+
+
+const name =
+document
+.getElementById("productName")
+.value
+.trim();
+
+
+const price =
+document
+.getElementById("productPrice")
+.value
+.trim();
+
+
+const description =
+document
+.getElementById("productDescription")
+.value
+.trim();
+
+
+const message =
+document.getElementById("message");
+
 
 if(name===""){
 
-message.textContent="❌ Enter Product Name";
+message.textContent =
+"❌ Enter Product Name";
 
 return;
 
 }
 
+
 try{
+
 
 await uploadAllMedia();
 
-const {error}=await supabaseClient
+
+if(uploadedMedia.length===0){
+
+message.textContent =
+"❌ Please upload at least one photo or video";
+
+return;
+
+}
+
+
+message.textContent =
+"⏳ Saving Product...";
+
+
+const { error } =
+await supabaseClient
+
 .from("products")
+
 .insert([{
 
 name:name,
@@ -250,45 +541,346 @@ views:0
 
 }]);
 
+
 if(error){
 
-message.textContent="❌ "+error.message;
+message.textContent =
+"❌ "+error.message;
 
 return;
 
 }
 
-message.textContent="✅ Product Saved Successfully";
 
-document.getElementById("productName").value="";
-document.getElementById("productPrice").value="";
-document.getElementById("productDescription").value="";
+message.textContent =
+"✅ Product Saved Successfully";
+
+
+/* CLEAR FORM */
+
+
+document
+.getElementById("productName")
+.value="";
+
+
+document
+.getElementById("productPrice")
+.value="";
+
+
+document
+.getElementById("productDescription")
+.value="";
+
 
 for(let i=1;i<=5;i++){
 
-document.getElementById("media"+i).value="";
+document
+.getElementById("media"+i)
+.value="";
+
+document
+.getElementById("detail"+i)
+.value="";
 
 }
+
 
 uploadedMedia=[];
 
+
+/* REFRESH ADMIN PRODUCTS */
+
+loadAdminProducts();
+
+
 }catch(err){
 
-message.textContent="❌ "+err.message;
+
+console.error(err);
+
+
+message.textContent =
+"❌ "+err.message;
 
 }
 
 }
+
+
+
+/* =========================
+   LOAD ADMIN PRODUCTS
+========================= */
+
+
+async function loadAdminProducts(){
+
+
+const container =
+document.getElementById("adminProducts");
+
+
+container.innerHTML =
+"<p>⏳ Loading Products...</p>";
+
+
+const { data,error } =
+await supabaseClient
+
+.from("products")
+
+.select("*")
+
+.order("id",{ascending:false});
+
+
+if(error){
+
+console.error(error);
+
+container.innerHTML =
+"<p>❌ Failed to load products</p>";
+
+return;
+
+}
+
+
+if(!data || data.length===0){
+
+container.innerHTML =
+"<p>📦 No Products Found</p>";
+
+return;
+
+}
+
+
+container.innerHTML="";
+
+
+data.forEach((product,index)=>{
+
+
+const productBox =
+document.createElement("div");
+
+
+productBox.className =
+"admin-product";
+
+
+let mediaHTML="";
+
+
+const media =
+Array.isArray(product.media)
+? product.media
+: [];
+
+
+media.forEach((item,mediaIndex)=>{
+
+
+const number =
+mediaIndex+1;
+
+
+let mediaContent="";
+
+
+if(item.type==="image"){
+
+mediaContent = `
+
+<img
+src="${item.url}"
+alt="Product Media">
+
+`;
+
+}
+
+
+else if(item.type==="video"){
+
+mediaContent = `
+
+<video controls>
+
+<source
+src="${item.url}"
+type="video/mp4">
+
+Your browser does not support video.
+
+</video>
+
+`;
+
+}
+
+
+mediaHTML += `
+
+<div class="media-box">
+
+<h3>📁 Media ${number}</h3>
+
+${mediaContent}
+
+<div class="media-detail">
+
+<b>📝 Detail:</b>
+
+<p>
+${item.detail || "No detail added"}
+</p>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+productBox.innerHTML = `
+
+<h2>
+📦 Product ${index+1}
+</h2>
+
+<h3>
+${product.name || ""}
+</h3>
+
+<p>
+<b>💰 Price:</b>
+${product.price || ""}
+</p>
+
+<p>
+<b>📝 Product Description:</b>
+</p>
+
+<p>
+${product.description || ""}
+</p>
+
+${mediaHTML}
+
+<p>
+<b>👁️ Views:</b>
+${product.views || 0}
+</p>
+
+<button
+class="signup-btn delete-product"
+onclick="deleteProduct(${product.id})">
+
+🗑️ DELETE PRODUCT
+
+</button>
+
+`;
+
+
+container.appendChild(productBox);
+
+});
+
+}
+
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+
+async function deleteProduct(id){
+
+
+const confirmDelete =
+confirm(
+"⚠️ Kya aap is product ko delete karna chahte hain?"
+);
+
+
+if(!confirmDelete){
+
+return;
+
+}
+
+
+const { error } =
+await supabaseClient
+
+.from("products")
+
+.delete()
+
+.eq("id",id);
+
+
+if(error){
+
+alert(
+"❌ Delete failed: "+
+error.message
+);
+
+return;
+
+}
+
+
+alert(
+"✅ Product Deleted Successfully"
+);
+
+
+loadAdminProducts();
+
+}
+
+
+
+/* =========================
+   LOGOUT
+========================= */
+
 
 async function logout(){
 
-await supabaseClient.auth.signOut();
 
-window.location.href="index.html";
+await supabaseClient
+.auth
+.signOut();
+
+
+window.location.href =
+"index.html";
 
 }
 
+
+
+/* =========================
+   START
+========================= */
+
+
+loadAdminProducts();
+
+
 </script>
+
 
 </body>
 
