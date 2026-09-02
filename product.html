@@ -5,31 +5,69 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Product Details</title>
+<title>Product Details - MR BILLA DLR</title>
 
 <link rel="stylesheet" href="Style.css">
 
 </head>
 
+
 <body>
+
 
 <div class="card">
 
-<h1 id="productName"></h1>
 
-<div id="mediaContainer"></div>
+<h1 id="productName">
+Product
+</h1>
+
+
+<div id="mediaCounter"
+style="margin-bottom:10px;">
+</div>
+
+
+<div id="mediaContainer">
+Loading...
+</div>
+
 
 <br>
 
-<h2 id="productPrice"></h2>
 
-<p id="productDescription"></p>
+<div
+id="mediaDetail"
+style="
+padding:15px;
+margin-top:15px;
+border-radius:10px;
+background:#181818;
+">
 
-<p id="productViews"></p>
+</div>
+
 
 <br>
+
+
+<h2 id="productPrice">
+</h2>
+
+
+<p id="productDescription">
+</p>
+
+
+<p id="productViews">
+</p>
+
+
+<br>
+
 
 <button
 id="prevBtn"
@@ -39,6 +77,7 @@ class="signup-btn">
 
 </button>
 
+
 <button
 id="nextBtn"
 class="signup-btn">
@@ -47,7 +86,9 @@ Next ➡
 
 </button>
 
+
 <br><br>
+
 
 <a
 href="Gallery.html"
@@ -56,148 +97,482 @@ class="start-btn">
 ⬅ Back To Gallery
 
 </a>
-  <br><br>
+
+
+<br><br>
+
 
 <button
 id="deleteBtn"
 class="signup-btn"
-style="display:none;background:red;">
+style="
+display:none;
+background:red;
+">
 
 🗑 DELETE PRODUCT
 
 </button>
 
+
 </div>
 
-<script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="supabase.js"></script>
 
+
+
+<script>
+
+
+/* =========================
+   GET SELECTED PRODUCT
+========================= */
+
+
+const savedProduct =
+localStorage.getItem("selectedProduct");
+
+
+if(!savedProduct){
+
+alert("❌ Product not found");
+
+window.location.href =
+"Gallery.html";
+
+}
+
+
 const product =
-JSON.parse(
-localStorage.getItem("selectedProduct")
-);
+JSON.parse(savedProduct);
+
 
 let currentIndex = 0;
 
+
 const media =
-product.media || [];
+Array.isArray(product.media)
+? product.media
+: [];
 
-document.getElementById("productName").innerText =
-product.name;
 
-document.getElementById("productPrice").innerText =
-"💰 " + product.price;
 
-document.getElementById("productDescription").innerText =
-product.description;
+/* =========================
+   PRODUCT INFORMATION
+========================= */
 
-document.getElementById("productViews").innerText =
-"👁 Views : " + product.views;
-  function showMedia(){
-  async function updateViews(){
 
-const newViews = (product.views || 0) + 1;
+document.getElementById(
+"productName"
+).innerText =
+"📦 " + (product.name || "Product");
 
-const { error } = await supabaseClient
-.from("products")
-.update({
-views: newViews
-})
-.eq("id", product.id);
 
-if(!error){
+document.getElementById(
+"productPrice"
+).innerText =
+"💰 Price: " + (product.price || "");
 
-document.getElementById("productViews").innerText =
-"👁 Views : " + newViews;
 
-product.views = newViews;
+document.getElementById(
+"productDescription"
+).innerText =
+product.description || "";
 
-}
 
-}
+document.getElementById(
+"productViews"
+).innerText =
+"👁 Views: " + (product.views || 0);
 
-updateViews();
+
+
+/* =========================
+   SHOW MEDIA
+========================= */
+
+
+function showMedia(){
+
 
 const container =
-document.getElementById("mediaContainer");
+document.getElementById(
+"mediaContainer"
+);
+
+
+const detailBox =
+document.getElementById(
+"mediaDetail"
+);
+
+
+const counter =
+document.getElementById(
+"mediaCounter"
+);
+
 
 container.innerHTML = "";
 
-if(media.length===0){
+
+detailBox.innerHTML = "";
+
+
+
+if(media.length === 0){
 
 container.innerHTML =
-"<h3>No Media</h3>";
+"<h3>📷 No Media Available</h3>";
 
 return;
 
 }
 
-const item = media[currentIndex];
 
-if(item.type==="image"){
 
-container.innerHTML =
+const item =
+media[currentIndex];
 
-`<img
+
+
+/* MEDIA COUNTER */
+
+
+counter.innerText =
+"📁 Media " +
+(currentIndex + 1) +
+" / " +
+media.length;
+
+
+
+/* =========================
+   IMAGE
+========================= */
+
+
+if(item.type === "image"){
+
+
+container.innerHTML = `
+
+<img
+
 src="${item.url}"
-style="width:100%;border-radius:10px;">`;
 
-}else{
+alt="Product Image"
 
-container.innerHTML =
+style="
 
-`<video
+width:100%;
+
+max-height:500px;
+
+object-fit:contain;
+
+border-radius:10px;
+
+">
+
+`;
+
+}
+
+
+
+/* =========================
+   VIDEO
+========================= */
+
+
+else if(item.type === "video"){
+
+
+container.innerHTML = `
+
+<video
+
 controls
-autoplay
-style="width:100%;border-radius:10px;">
+
+style="
+
+width:100%;
+
+max-height:500px;
+
+border-radius:10px;
+
+">
 
 <source
+
 src="${item.url}"
+
 type="video/mp4">
 
-</video>`;
+Your browser does not support video.
+
+</video>
+
+`;
 
 }
 
+
+
+/* =========================
+   MEDIA DETAIL
+========================= */
+
+
+detailBox.innerHTML = `
+
+<h3>📝 Media Detail</h3>
+
+<p>
+
+${
+item.detail ||
+"No detail added for this media."
 }
+
+</p>
+
+`;
+
+
+
+/* =========================
+   BUTTON STATES
+========================= */
+
+
+document.getElementById(
+"prevBtn"
+).disabled =
+currentIndex === 0;
+
+
+document.getElementById(
+"nextBtn"
+).disabled =
+currentIndex === media.length - 1;
+
+}
+
+
+
+/* =========================
+   NEXT BUTTON
+========================= */
+
+
+document.getElementById(
+"nextBtn"
+).onclick =
+function(){
+
+
+if(currentIndex <
+media.length - 1){
+
+currentIndex++;
 
 showMedia();
-  async function enableDeleteButton(){
 
-const { data } =
-await supabaseClient.auth.getSession();
+}
 
-if(
-data.session &&
-data.session.user.email.toLowerCase() ===
-"kamrangamer866@gmail.com"
-){
+};
 
-const btn =
-document.getElementById("deleteBtn");
 
-btn.style.display = "block";
 
-btn.onclick = async function(){
+/* =========================
+   PREVIOUS BUTTON
+========================= */
 
-if(!confirm("Delete this product?")) return;
+
+document.getElementById(
+"prevBtn"
+).onclick =
+function(){
+
+
+if(currentIndex > 0){
+
+currentIndex--;
+
+showMedia();
+
+}
+
+};
+
+
+
+/* =========================
+   UPDATE VIEWS
+========================= */
+
+
+async function updateViews(){
+
+
+const newViews =
+(product.views || 0) + 1;
+
 
 const { error } =
 await supabaseClient
+
 .from("products")
-.delete()
-.eq("id", product.id);
+
+.update({
+
+views:newViews
+
+})
+
+.eq("id",product.id);
+
+
+if(!error){
+
+
+product.views =
+newViews;
+
+
+document.getElementById(
+"productViews"
+).innerText =
+"👁 Views: " + newViews;
+
+
+localStorage.setItem(
+"selectedProduct",
+JSON.stringify(product)
+);
+
+}
+
+}
+
+
+
+/* =========================
+   ADMIN DELETE BUTTON
+========================= */
+
+
+async function enableDeleteButton(){
+
+
+const { data, error } =
+await supabaseClient
+.auth
+.getSession();
+
 
 if(error){
 
-alert(error.message);
+console.error(error);
 
 return;
 
 }
 
-alert("✅ Product Deleted");
+
+if(
+data.session &&
+data.session.user.email &&
+data.session.user.email.toLowerCase()
+===
+"kamrangamer866@gmail.com"
+){
+
+
+const deleteBtn =
+document.getElementById(
+"deleteBtn"
+);
+
+
+deleteBtn.style.display =
+"block";
+
+
+
+deleteBtn.onclick =
+async function(){
+
+
+const confirmDelete =
+confirm(
+"⚠️ Kya aap is Product ko delete karna chahte hain?"
+);
+
+
+if(!confirmDelete){
+
+return;
+
+}
+
+
+deleteBtn.disabled =
+true;
+
+
+deleteBtn.innerText =
+"Deleting...";
+
+
+const { error } =
+await supabaseClient
+
+.from("products")
+
+.delete()
+
+.eq("id",product.id);
+
+
+if(error){
+
+
+alert(
+"❌ Delete failed: " +
+error.message
+);
+
+
+deleteBtn.disabled =
+false;
+
+
+deleteBtn.innerText =
+"🗑 DELETE PRODUCT";
+
+
+return;
+
+}
+
+
+localStorage.removeItem(
+"selectedProduct"
+);
+
+
+alert(
+"✅ Product Deleted Successfully"
+);
+
 
 window.location.href =
 "Gallery.html";
@@ -208,32 +583,22 @@ window.location.href =
 
 }
 
+
+
+/* =========================
+   START
+========================= */
+
+
+showMedia();
+
+updateViews();
+
 enableDeleteButton();
 
-document.getElementById("nextBtn").onclick=function(){
 
-if(currentIndex < media.length-1){
+</script>
 
-currentIndex++;
-
-showMedia();
-
-}
-
-}
-
-document.getElementById("prevBtn").onclick=function(){
-
-if(currentIndex>0){
-
-currentIndex--;
-
-showMedia();
-
-}
-
-}
-  </script>
 
 </body>
 
