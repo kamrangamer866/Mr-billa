@@ -17,388 +17,236 @@ content="width=device-width, initial-scale=1.0">
 
 <body>
 
-
 <div class="card">
 
 <h1>🔥 MR BILLA DLR 🔥</h1>
 
 <h2>📦 Products Gallery</h2>
 
-
 <div id="products">
-
 Loading Products...
-
 </div>
-
 
 <br>
 
-
-<a
-href="index.html"
-class="start-btn">
-
+<a href="index.html" class="start-btn">
 🏠 HOME
-
 </a>
-
 
 </div>
 
 
+<!-- SUPABASE -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script src="supabase.js"></script>
 
 
-
 <script>
 
+async function loadProducts() {
 
-async function loadProducts(){
+    const container = document.getElementById("products");
 
-
-const container =
-document.getElementById("products");
-
-
-container.innerHTML =
-"<p>Loading Products...</p>";
+    container.innerHTML = "<p>Loading Products...</p>";
 
 
-
-const { data, error } =
-await supabaseClient
-
-.from("products")
-
-.select("*")
-
-.order("id", {
-ascending:false
-});
+    const { data, error } = await supabaseClient
+        .from("products")
+        .select("*")
+        .order("id", { ascending: false });
 
 
+    /* ERROR */
 
-if(error){
+    if (error) {
 
-console.error(error);
+        console.error("Supabase Error:", error);
 
-container.innerHTML =
-"<h3>❌ Failed to load products</h3>";
+        container.innerHTML =
+            "<h3>❌ Failed to load products</h3>";
 
-return;
+        return;
+    }
+
+
+    /* NO PRODUCTS */
+
+    if (!data || data.length === 0) {
+
+        container.innerHTML =
+            "<h3>📦 No Products Found</h3>";
+
+        return;
+    }
+
+
+    /* CLEAR LOADING */
+
+    container.innerHTML = "";
+
+
+    /* SHOW PRODUCTS */
+
+    for (const product of data) {
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.style.cursor = "pointer";
+
+
+        /* GET MEDIA */
+
+        const media = Array.isArray(product.media)
+            ? product.media
+            : [];
+
+
+        let mediaHTML = "";
+
+
+        /* FIRST MEDIA ONLY */
+
+        if (media.length > 0) {
+
+            const firstMedia = media[0];
+
+
+            if (firstMedia.type === "video") {
+
+                mediaHTML = `
+                    <video
+                        src="${firstMedia.url}"
+                        controls
+                        style="
+                            width:100%;
+                            max-height:300px;
+                            border-radius:12px;
+                        ">
+                    </video>
+                `;
+
+            } else {
+
+                mediaHTML = `
+                    <img
+                        src="${firstMedia.url}"
+                        alt="${product.name || "Product"}"
+                        style="
+                            width:100%;
+                            max-height:300px;
+                            object-fit:cover;
+                            border-radius:12px;
+                        ">
+                `;
+            }
+
+        } else {
+
+            mediaHTML = `
+                <div>
+                    📦 No Image/Video
+                </div>
+            `;
+
+        }
+
+
+        /* PRODUCT HTML */
+
+        card.innerHTML = `
+
+            ${mediaHTML}
+
+            <h2>
+                ${product.name || "Unnamed Product"}
+            </h2>
+
+            <h3>
+                💰 ${product.price || "Price not available"}
+            </h3>
+
+            <p>
+                ${product.description || ""}
+            </p>
+
+            <p>
+                👁️ Views: ${product.views || 0}
+            </p>
+
+            <p>
+                👉 Click to view all photos/videos
+            </p>
+
+        `;
+
+
+        /* OPEN PRODUCT */
+
+        card.addEventListener("click", async function () {
+
+
+            /* INCREASE VIEWS */
+
+            const newViews =
+                (product.views || 0) + 1;
+
+
+            const { error: updateError } =
+                await supabaseClient
+                    .from("products")
+                    .update({
+                        views: newViews
+                    })
+                    .eq("id", product.id);
+
+
+            if (updateError) {
+
+                console.error(
+                    "View update error:",
+                    updateError
+                );
+
+            }
+
+
+            /* UPDATE LOCAL PRODUCT */
+
+            product.views = newViews;
+
+
+            /* SAVE PRODUCT */
+
+            localStorage.setItem(
+                "selectedProduct",
+                JSON.stringify(product)
+            );
+
+
+            /* OPEN PRODUCT PAGE */
+
+            window.location.href =
+                "product.html";
+
+        });
+
+
+        /* ADD TO PAGE */
+
+        container.appendChild(card);
+
+    }
 
 }
 
 
-
-if(!data || data.length === 0){
-
-container.innerHTML =
-"<h3>📦 No Products Found</h3>";
-
-return;
-
-}
-
-
-
-container.innerHTML = "";
-
-
-
-for(const product of data){
-
-
-const card =
-document.createElement("div");
-
-
-card.className =
-"card";
-
-
-card.style.cursor =
-"pointer";
-
-
-
-/* =========================
-   GET MEDIA
-========================= */
-
-
-const media =
-Array.isArray(product.media)
-? product.media
-: [];
-
-
-
-let mediaHTML = "";
-
-
-
-/* =========================
-   ONLY FIRST MEDIA SHOW
-========================= */
-
-
-if(media.length > 0){
-
-
-const firstMedia =
-media[0];
-
-
-
-if(firstMedia.type === "image"){
-
-
-mediaHTML = `
-
-<img
-
-src="${firstMedia.url}"
-
-alt="Product Image"
-
-style="
-
-width:100%;
-
-max-height:300px;
-
-object-fit:contain;
-
-border-radius:10px;
-
-margin-top:15px;
-
-">
-
-`;
-
-
-
-}
-
-
-else if(firstMedia.type === "video"){
-
-
-mediaHTML = `
-
-<video
-
-controls
-
-style="
-
-width:100%;
-
-max-height:300px;
-
-border-radius:10px;
-
-margin-top:15px;
-
-">
-
-<source
-
-src="${firstMedia.url}"
-
-type="video/mp4">
-
-</video>
-
-`;
-
-}
-
-
-}
-
-
-else{
-
-
-mediaHTML = `
-
-<p>📷 No Media Available</p>
-
-`;
-
-}
-
-
-
-/* =========================
-   PRODUCT CARD
-========================= */
-
-
-card.innerHTML = `
-
-<h2>
-
-📦 ${product.name || "Product"}
-
-</h2>
-
-
-<p>
-
-<b>💰 Price:</b>
-
-${product.price || ""}
-
-</p>
-
-
-<p>
-
-${product.description || ""}
-
-</p>
-
-
-${mediaHTML}
-
-
-<p>
-
-<b>👁️ Views:</b>
-
-${product.views || 0}
-
-</p>
-
-
-<p style="color:#00e676;">
-
-👉 Click to view all photos/videos
-
-</p>
-
-
-<hr>
-
-`;
-
-
-
-/* =========================
-   OPEN PRODUCT PAGE
-========================= */
-
-
-card.addEventListener(
-"click",
-async function(e){
-
-
-
-/*
-
-Video controls par click
-karne se product page open
-nahi hoga.
-
-*/
-
-
-if(
-
-e.target.tagName === "VIDEO" ||
-
-e.target.tagName === "SOURCE"
-
-){
-
-return;
-
-}
-
-
-
-/* =========================
-   INCREASE VIEW
-========================= */
-
-
-const newViews =
-(product.views || 0) + 1;
-
-
-
-await supabaseClient
-
-.from("products")
-
-.update({
-
-views:newViews
-
-})
-
-.eq("id",product.id);
-
-
-
-product.views =
-newViews;
-
-
-
-/* =========================
-   SAVE PRODUCT
-========================= */
-
-
-localStorage.setItem(
-
-"selectedProduct",
-
-JSON.stringify(product)
-
-);
-
-
-
-/* =========================
-   OPEN PRODUCT
-========================= */
-
-
-window.location.href =
-"product.html";
-
-
-});
-
-
-
-container.appendChild(card);
-
-
-}
-
-}
-
-
-
-/* =========================
-   START
-========================= */
-
+/* START */
 
 loadProducts();
-
 
 </script>
 
